@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+USER root
+
+COPY ./flask_endpoint/requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
+
+COPY --chown=root:root ./flask_endpoint /app
+
+WORKDIR /app
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]

@@ -1,0 +1,28 @@
+FROM apache/airflow:2.9.1-python3.9
+USER root
+
+# Install OpenJDK-11
+RUN apt update && \
+    apt-get install -y openjdk-17-jdk && \
+    apt-get install -y ant && \
+    apt-get install -y procps && \
+    apt-get clean;
+
+RUN curl https://jdbc.postgresql.org/download/postgresql-42.2.18.jar -o /opt/postgresql-42.2.18.jar
+
+ENV POSTGRESQL_JAR_PATH /opt/postgresql-42.2.18.jar
+
+# Set JAVA_HOME
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-arm64
+RUN export JAVA_HOME
+
+USER airflow
+
+RUN pip install \
+    lxml \
+    pyspark==3.3.2 \
+    apache-airflow-providers-apache-spark \
+    requests \
+    pandas
+
+COPY --chown=airflow:root ./dags /opt/airflow/dags
