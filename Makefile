@@ -47,6 +47,8 @@ docker-build-arm:
 	@echo '==========================================================='
 	@docker build -t dataeng-dibimbing/flask -f ./docker/Dockerfile.flask .
 	@echo '==========================================================='
+	@docker build -t dataeng-dibimbing/dashboard -f ./docker/Dockerfile.dashboard .
+	@echo '==========================================================='
 
 jupyter:
 	@echo '__________________________________________________________'
@@ -57,6 +59,13 @@ jupyter:
 	@echo 'Processing token...'
 	@sleep 20
 	@docker logs ${JUPYTER_CONTAINER_NAME} 2>&1 | grep '\?token\=' -m 1 | cut -d '=' -f2
+	@echo '==========================================================='
+
+dashboard:
+	@echo '__________________________________________________________'
+	@echo 'Creating Dashboard Instance ...'
+	@echo '__________________________________________________________'
+	@docker compose -f ./docker/docker-compose-dashboard.yml --env-file .env up -d
 	@echo '==========================================================='
 
 spark:
