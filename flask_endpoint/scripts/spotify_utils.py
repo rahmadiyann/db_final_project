@@ -5,12 +5,13 @@ from sqlalchemy.orm import Session
 from scripts.models import Token
 import time
 from datetime import datetime
+import os
 
 logger = logging.getLogger(__name__)
 
 scope = 'user-read-recently-played user-library-read'
-client_id = '1c9c9fe9723045b58a3dd31c2a7be91f'
-client_secret = '577ae584282b4e539dfe893134b74430'
+client_id = os.getenv('SPOTIFY_CLIENT_ID')
+client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
 redirect_uri = 'http://localhost:8000/callback'
 auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(auth_manager=auth_manager)
