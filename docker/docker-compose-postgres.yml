@@ -33,7 +33,7 @@ services:
       - ../sql:/sql
       - ../data:/data
     ports:
-      - ${POSTGRE_PORT_ANALYSIS}:5433
+      - ${POSTGRES_PORT_ANALYSIS}:5433
 
 networks:
   dataeng-network:
