@@ -110,10 +110,20 @@ postgres-create:
 	@echo '__________________________________________________________'
 	@echo 'Postgres container created at port ${POSTGRES_PORT}...'
 	@echo '__________________________________________________________'
-	@echo 'Postgres Docker Host	: ${POSTGRES_CONTAINER_NAME}' &&\
-		echo 'Postgres Account	: ${POSTGRES_USER}' &&\
-		echo 'Postgres password	: ${POSTGRES_PASSWORD}' &&\
-		echo 'Postgres Db		: ${POSTGRES_DB}'
+	@echo 'Main Postgres Docker Host	: ${POSTGRES_CONTAINER_NAME}' &&\
+		echo 'Main Postgres Account	: ${POSTGRES_USER}' &&\
+		echo 'Main Postgres password	: ${POSTGRES_PASSWORD}' &&\
+		echo 'Main Postgres Db		: ${POSTGRES_DB}'
+	@echo '__________________________________________________________'
+	@echo 'Source Postgres Host	: ${POSTGRES_HOST_SOURCE}' &&\
+		echo 'Source Postgres Account	: ${POSTGRES_SOURCE_USER}' &&\
+		echo 'Source Postgres password	: ${POSTGRES_SOURCE_PASSWORD}' &&\
+		echo 'Source Postgres Db		: ${POSTGRES_SOURCE_DB}'
+	@echo '__________________________________________________________'
+	@echo 'Analysis Postgres Docker Host	: ${POSTGRES_CONTAINER_NAME}-analysis' &&\
+		echo 'Analysis Postgres Account	: ${POSTGRES_USER}' &&\
+		echo 'Analysis Postgres password	: ${POSTGRES_PASSWORD}' &&\
+		echo 'Analysis Postgres Db		: ${POSTGRES_DB}-analysis'
 	@sleep 5
 	@echo '==========================================================='
 
@@ -210,3 +220,5 @@ stop:
 
 postgres-bash:
 	@docker exec -it dataeng-postgres bash
+
+run-db-final-project: postgres-create flask-create airflow-create
