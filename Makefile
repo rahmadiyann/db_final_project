@@ -68,14 +68,18 @@ dashboard:
 	@docker compose -f ./docker/docker-compose-dashboard.yml --env-file .env up -d
 	@echo '==========================================================='
 
-spark:
+
+spark: spark-create
+spark-create:
 	@echo '__________________________________________________________'
 	@echo 'Creating Spark Cluster ...'
 	@echo '__________________________________________________________'
 	@docker compose -f ./docker/docker-compose-spark.yml --env-file .env up -d
 	@echo '==========================================================='
 
-flask:
+flask: flask-create
+
+flask-create:
 	@echo '__________________________________________________________'
 	@echo 'Creating Flask Instance ...'
 	@echo '__________________________________________________________'
@@ -96,7 +100,8 @@ spark-submit-airflow-test:
 		--conf "spark.ui.enabled=false" \
 		/spark-scripts/spark-example.py
 
-airflow:
+airflow: airflow-create
+airflow-create:
 	@echo '__________________________________________________________'
 	@echo 'Creating Airflow Instance ...'
 	@echo '__________________________________________________________'
@@ -221,4 +226,4 @@ stop:
 postgres-bash:
 	@docker exec -it dataeng-postgres bash
 
-run-db-final-project: postgres-create flask-create airflow-create
+run-db-final-project: postgres-create flask-create airflow-create spark-create
