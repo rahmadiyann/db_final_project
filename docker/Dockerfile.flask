@@ -6,7 +6,9 @@ COPY ./flask_endpoint/requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
 COPY --chown=root:root ./flask_endpoint /app
+COPY --chown=root:root ./flask_endpoint/app.py /app/app.py
+
 
 WORKDIR /app
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
+CMD ["python3", "app.py"]
