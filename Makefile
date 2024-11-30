@@ -2,10 +2,9 @@ include .env
 
 help:
 	@echo "## docker-build-arm		- Build Docker Images (arm64) including its inter-container network."
-	@echo "## postgres			- Run a Postgres container  "
+	@echo "## postgres			- Run a Postgres container debezium ready."
 	@echo "## spark			- Run a Spark cluster, rebuild the postgres container, then create the destination tables "
 	@echo "## airflow			- Spinup airflow scheduler and webserver."
-	@echo "## kafka			- Spinup kafka cluster (Kafka+Zookeeper)."
 	@echo "## clean			- Cleanup all running containers related to the challenge."
 
 docker-build-arm:
@@ -63,34 +62,31 @@ postgres: postgres-create postgres-create-warehouse postgres-create-table postgr
 postgres-create:
 	@docker compose -f ./docker/docker-compose-postgres.yml --env-file .env up -d
 	@echo '__________________________________________________________'
-	@echo 'Postgres container created at port ${POSTGRES_PORT}...'
+	@echo 'Main Postgres container created at port ${POSTGRES_PORT}...'
 	@echo '__________________________________________________________'
 	@echo 'Main Postgres Docker Host	: ${POSTGRES_CONTAINER_NAME}' &&\
 		echo 'Main Postgres Account	: ${POSTGRES_USER}' &&\
 		echo 'Main Postgres password	: ${POSTGRES_PASSWORD}' &&\
 		echo 'Main Postgres Db		: ${POSTGRES_DB}'
+	@echo 'Analysis Postgres container created at port ${POSTGRES_ANALYSIS_PORT}...'
+	@echo '__________________________________________________________'
+	@echo 'Analysis Postgres Docker Host	: ${POSTGRES_ANALYSIS_CONTAINER_NAME}' &&\
+		echo 'Analysis Postgres Account	: ${POSTGRES_ANALYSIS_USER}' &&\
+		echo 'Analysis Postgres password	: ${POSTGRES_ANALYSIS_PASSWORD}' &&\
+		echo 'Analysis Postgres Db		: ${POSTGRES_ANALYSIS_DB}'
+	@echo '__________________________________________________________'
+	@echo 'Replica Postgres container created at port ${POSTGRES_REPLICA_PORT}...'
+	@echo '__________________________________________________________'
+	@echo 'Replica Postgres Docker Host	: ${POSTGRES_REPLICA_CONTAINER_NAME}' &&\
+		echo 'Replica Postgres Account	: ${POSTGRES_REPLICA_USER}' &&\
+		echo 'Replica Postgres password	: ${POSTGRES_REPLICA_PASSWORD}' &&\
+		echo 'Replica Postgres Db		: ${POSTGRES_REPLICA_DB}'
 	@echo '__________________________________________________________'
 	@echo 'Source Postgres Host	: ${POSTGRES_HOST_SOURCE}' &&\
 		echo 'Source Postgres Account	: ${POSTGRES_SOURCE_USER}' &&\
 		echo 'Source Postgres password	: ${POSTGRES_SOURCE_PASSWORD}' &&\
 		echo 'Source Postgres Db		: ${POSTGRES_SOURCE_DB}'
-	@echo '__________________________________________________________'
-	@echo 'Analysis Postgres Docker Host	: ${POSTGRES_CONTAINER_NAME}-analysis' &&\
-		echo 'Analysis Postgres Account	: ${POSTGRES_USER}' &&\
-		echo 'Analysis Postgres password	: ${POSTGRES_PASSWORD}' &&\
-		echo 'Analysis Postgres Db		: ${POSTGRES_DB}-analysis'
 	@sleep 5
-	@echo '==========================================================='
-
-kafka: kafka-create
-
-kafka-create:
-	@echo '__________________________________________________________'
-	@echo 'Creating Kafka Cluster ...'
-	@echo '__________________________________________________________'
-	@docker compose -f ./docker/docker-compose-kafka.yml --env-file .env up -d
-	@echo 'Waiting for uptime on http://localhost:8083 ...'
-	@sleep 20
 	@echo '==========================================================='
 
 clean:
