@@ -1,6 +1,6 @@
 services:
   dibimbing-dataeng-postgres:
-    image: postgres:11
+    image: quay.io/debezium/example-postgres:${DEBEZIUM_VERSION}
     container_name: ${POSTGRES_CONTAINER_NAME}
     restart: unless-stopped
     hostname: ${POSTGRES_CONTAINER_NAME}
@@ -18,7 +18,7 @@ services:
       - ${POSTGRES_PORT}:5432
 
   dibimbing-dataeng-postgres-analysis:
-    image: postgres:11
+    image: quay.io/debezium/example-postgres:${DEBEZIUM_VERSION}
     container_name: ${POSTGRES_CONTAINER_NAME}-analysis
     restart: unless-stopped
     hostname: ${POSTGRES_CONTAINER_NAME}-analysis
