@@ -17,6 +17,12 @@ auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=clien
 sp = spotipy.Spotify(auth_manager=auth_manager)
 
 def create_spotify_oauth():
+    """
+    Create Spotify OAuth object.
+    
+    Returns:
+        SpotifyOAuth: Spotify OAuth object
+    """
     return SpotifyOAuth(
         client_id=client_id,
         client_secret=client_secret,
@@ -25,6 +31,13 @@ def create_spotify_oauth():
     )
     
 def save_token_info(session: Session, token_info: dict):
+    """
+    Save token info to database.
+    
+    Args:
+        session (Session): SQLAlchemy Database session
+        token_info (dict): Token info
+    """
     session.add(Token(
         access_token=token_info['access_token'],
         refresh_token=token_info['refresh_token'],
@@ -33,6 +46,15 @@ def save_token_info(session: Session, token_info: dict):
     session.commit()
     
 def load_access_token(session: Session):
+    """
+    Load access token from database.
+    
+    Args:
+        session (Session): SQLAlchemy Database session
+        
+    Returns:
+        str: Access token
+    """
     token = session.query(Token).first()
     is_expired = token.expires_at - int(time.time()) < 600
     
@@ -56,65 +78,136 @@ def iso_to_unix_ms(iso_string):
     dt = datetime.fromisoformat(iso_string.replace('Z', '+00:00'))
     return int(dt.timestamp() * 1000)
     
-def get_recent_played(session: Session):
+def get_recent_played(session: Session) -> dict | None:
+    """
+    Get recent played songs from Spotify API.
+    
+    Args:
+        session (Session): SQLAlchemy Database session
+
+    Returns:
+        dict | None: Recent played songs data
+    """
     access_token = load_access_token(session)
     sp = spotipy.Spotify(auth=access_token)
     last_fetched = session.query(Token).first().last_fetched
-    data = sp.current_user_recently_played(after=last_fetched)
-    if data['items'] == []:
-        session.query(Token).update({'last_fetched': int(time.time())})
+    try:
+        data = sp.current_user_recently_played(after=last_fetched)
+        if data['items'] == []:
+            session.query(Token).update({'last_fetched': int(time.time())})
+            session.commit()
+            return None
+        session.query(Token).update({'last_fetched': iso_to_unix_ms(data['items'][0]['played_at'])})
         session.commit()
+        return data
+    except Exception as e:
+        logger.error(f"Error fetching recent played: {e}")
         return None
-    session.query(Token).update({'last_fetched': iso_to_unix_ms(data['items'][0]['played_at'])})
-    session.commit()
-    return data
 
-def get_song_detail(session: Session, song_id: str):
+def get_song_detail(session: Session, song_id: str) -> dict | None:
+    """
+    Get song detail from Spotify API.
+    
+    Args:
+        session (Session): SQLAlchemy Database session
+        song_id (str): Song ID
+
+    Returns:
+        dict | None: Song detail
+    """
     access_token = load_access_token(session)
     sp = spotipy.Spotify(auth=access_token)
-    data = sp.track(song_id)
-    name, disc_number, duration_ms, explicit, external_urls, preview_url, popularity = data['name'], data['disc_number'], data['duration_ms'], data['explicit'], data['external_urls']['spotify'], data['preview_url'], data['popularity']
-    return {
-        'name': name,
-        'disc_number': disc_number,
-        'duration_ms': duration_ms,
-        'explicit': explicit,
-        'external_urls': external_urls,
-        'preview_url': preview_url,
-        'popularity': popularity
-    }
+    try:
+        data = sp.track(song_id)
+        name, disc_number, duration_ms, explicit, external_urls, preview_url, popularity = data['name'], data['disc_number'], data['duration_ms'], data['explicit'], data['external_urls']['spotify'], data['preview_url'], data['popularity']
+        return {
+            'name': name,
+            'disc_number': disc_number,
+            'duration_ms': duration_ms,
+            'explicit': explicit,
+            'external_urls': external_urls,
+            'preview_url': preview_url,
+            'popularity': popularity
+        }
+    except Exception as e:
+        logger.error(f"Error fetching song detail: {e}")
+        return None
 
-def get_artist_detail(session: Session, artist_id: str):
+def get_artist_detail(session: Session, artist_id: str) -> dict | None:
+    """
+    Get artist detail from Spotify API.
+    
+    Args:
+        session (Session): SQLAlchemy Database session
+        artist_id (str): Artist ID
+
+    Returns:
+        dict | None: Artist detail
+    """
     access_token = load_access_token(session)
     sp = spotipy.Spotify(auth=access_token)
-    data = sp.artist(artist_id)
-    name, external_urls, followers, images, popularity = data['name'], data['external_urls']['spotify'], data['followers']['total'], data['images'], data['popularity']
-    return {
-        'name': name,
-        'external_urls': external_urls,
-        'followers': followers,
-        'images': images,
-        'popularity': popularity
-    }
+    try:
+        data = sp.artist(artist_id)
+        name, external_urls, followers, images, popularity = data['name'], data['external_urls']['spotify'], data['followers']['total'], data['images'], data['popularity']
+        return {
+            'name': name,
+            'external_urls': external_urls,
+            'followers': followers,
+            'images': images,
+            'popularity': popularity
+        }
+    except Exception as e:
+        logger.error(f"Error fetching artist detail: {e}")
+        return None
 
-def get_album_detail(session: Session, album_id: str):
+def get_album_detail(session: Session, album_id: str) -> dict | None:
+    """
+    Get album detail from Spotify API.
+    
+    Args:
+        session (Session): SQLAlchemy Database session
+        album_id (str): Album ID
+
+    Returns:
+        dict | None: Album detail
+    """
     access_token = load_access_token(session)
     sp = spotipy.Spotify(auth=access_token)
-    data = sp.album(album_id)
-    name, total_tracks, external_urls, images, label, popularity = data['name'], data['total_tracks'], data['external_urls']['spotify'], data['images'], data['label'], data['popularity']
-    return {
-        'name': name,
-        'total_tracks': total_tracks,
-        'external_urls': external_urls,
-        'images': images,
-        'label': label,
-        'popularity': popularity
-    }
+    try:
+        data = sp.album(album_id)
+        name, total_tracks, external_urls, images, label, popularity = data['name'], data['total_tracks'], data['external_urls']['spotify'], data['images'], data['label'], data['popularity']
+        return {
+            'name': name,
+            'total_tracks': total_tracks,
+            'external_urls': external_urls,
+            'images': images,
+            'label': label,
+            'popularity': popularity
+        }
+    except Exception as e:
+        logger.error(f"Error fetching album detail: {e}")
+        return None
 
 def get_callback(session: Session, code: str):
+    """
+    Get callback from Spotify API.
+    
+    Args:
+        session (Session): SQLAlchemy Database session
+        code (str): Authorization code
+
+    Returns:
+        dict: Token info
+    """
     token_info = create_spotify_oauth().get_access_token(code)
     save_token_info(session, token_info)
     return token_info
 
 def get_auth_url():
+    """
+    Get authorization URL from Spotify API.
+    
+    Returns:
+        str: Authorization URL
+    """
     return create_spotify_oauth().get_authorize_url()
