@@ -34,6 +34,7 @@ services:
       - ../data:/data
     ports:
       - ${POSTGRES_PORT}:5432
+    command: ["sh", "-c", "psql -f /sql/schema_ddl.sql"]
 
   dibimbing-dataeng-postgres-replica:
     image: quay.io/debezium/example-postgres:${DEBEZIUM_VERSION}
@@ -52,6 +53,7 @@ services:
       - ../data:/data
     ports:
       - ${POSTGRES_REPLICA_PORT}:5434
+    command: ["sh", "-c", "psql -f /sql/schema_ddl.sql"]
 
   dibimbing-dataeng-postgres-analysis:
     image: quay.io/debezium/example-postgres:${DEBEZIUM_VERSION}
@@ -70,6 +72,7 @@ services:
       - ../data:/data
     ports:
       - ${POSTGRES_PORT_ANALYSIS}:5433
+    command: ["sh", "-c", "psql -f /sql/analysis_schema_ddl.sql"]
 
   connect:
     container_name: connect
