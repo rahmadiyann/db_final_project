@@ -53,7 +53,7 @@ airflow-create:
 	@echo '__________________________________________________________'
 	@echo 'Creating Airflow Instance ...'
 	@echo '__________________________________________________________'
-	@docker compose -f ./docker/docker-compose-airflow.yml --env-file .env up
+	@docker compose -f ./docker/docker-compose-airflow.yml --env-file .env up -d
 	@echo '==========================================================='
 
 postgres: postgres-create
