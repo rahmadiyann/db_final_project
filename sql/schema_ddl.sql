@@ -1,5 +1,5 @@
 -- Create dim_artist table
-CREATE TABLE dim_artist (
+CREATE TABLE IF NOT EXISTS dim_artist (
     artist_id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     external_url TEXT NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE dim_artist (
 );
 
 -- Create dim_album table
-CREATE TABLE dim_album (
+CREATE TABLE IF NOT EXISTS dim_album (
     album_id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
     total_tracks INTEGER NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE dim_album (
 );
 
 -- Create dim_song table
-CREATE TABLE dim_song (
+CREATE TABLE IF NOT EXISTS dim_song (
     song_id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
     disc_number INTEGER NOT NULL,
@@ -33,9 +33,9 @@ CREATE TABLE dim_song (
 );
 
 -- Create fact_history table with foreign key constraints
-CREATE SEQUENCE fact_history_id_seq;
+CREATE SEQUENCE IF NOT EXISTS fact_history_id_seq;
 
-CREATE TABLE fact_history (
+CREATE TABLE IF NOT EXISTS fact_history (
     id INTEGER PRIMARY KEY DEFAULT nextval('fact_history_id_seq'),
     song_id TEXT NOT NULL,
     artist_id TEXT NOT NULL,
