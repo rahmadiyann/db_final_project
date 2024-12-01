@@ -26,3 +26,6 @@ RUN pip install \
     pandas
 
 COPY --chown=airflow:root ./dags /opt/airflow/dags
+COPY --chown=airflow:root ./data /opt/airflow/data
+COPY --chown=airflow:root ./spark_scripts /opt/airflow/spark_scripts
+COPY --chown=airflow:root ./bash_scripts /opt/airflow/bash_scripts

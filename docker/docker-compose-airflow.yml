@@ -20,8 +20,9 @@ services:
       - ../dags:/opt/airflow/dags
       - ../logs:/opt/airflow/logs
       - ../spark_scripts:/spark_scripts
+      - ../bash_scripts:/bash_scripts
       - ../scripts:/scripts
-
+      - ../data:/data
   webserver:
     image: dataeng-dibimbing/airflow
     container_name: ${AIRFLOW_WEBSERVER_CONTAINER_NAME}
@@ -45,8 +46,10 @@ services:
       - ../dags:/opt/airflow/dags
       - ../logs:/opt/airflow/logs
       - ../spark_scripts:/spark_scripts
+      - ../bash_scripts:/bash_scripts
       - ../scripts:/scripts
       - ../jars:/opt/airflow/jars
+      - ../data:/data
     ports:
       - ${AIRFLOW_WEBSERVER_PORT}:8080
 
