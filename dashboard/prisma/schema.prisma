@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("MAIN_DATABASE_URL")
+}
+
+model dim_album {
+  album_id     String         @id
+  title        String
+  total_tracks Int
+  release_date DateTime
+  external_url String
+  image_url    String?
+  label        String
+  popularity   Int
+  fact_history fact_history[]
+}
+
+model dim_artist {
+  artist_id      String         @id
+  name           String
+  external_url   String
+  follower_count Int
+  image_url      String?
+  popularity     Int
+  fact_history   fact_history[]
+}
+
+model dim_song {
+  song_id      String         @id
+  title        String
+  disc_number  Int
+  duration_ms  BigInt
+  explicit     Boolean
+  external_url String
+  preview_url  String?
+  popularity   Int
+  fact_history fact_history[]
+}
+
+model fact_history {
+  id         Int        @id @default(autoincrement())
+  song_id    String
+  artist_id  String
+  album_id   String
+  played_at  DateTime
+  dim_album  dim_album  @relation(fields: [album_id], references: [album_id])
+  dim_artist dim_artist @relation(fields: [artist_id], references: [artist_id])
+  dim_song   dim_song   @relation(fields: [song_id], references: [song_id])
+}
