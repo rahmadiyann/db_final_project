@@ -6,6 +6,8 @@ RUN apt update && \
     apt-get install -y openjdk-17-jdk && \
     apt-get install -y ant && \
     apt-get install -y procps && \
+    apt-get install -y bash && \
+    apt-get install -y postgresql-client && \
     apt-get clean;
 
 RUN curl https://jdbc.postgresql.org/download/postgresql-42.2.18.jar -o /opt/postgresql-42.2.18.jar
