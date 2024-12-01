@@ -57,7 +57,6 @@ airflow-create:
 	@echo '==========================================================='
 
 postgres: postgres-create
-
 postgres-create:
 	@docker compose -f ./docker/docker-compose-postgres.yml --env-file .env up -d
 	@echo '__________________________________________________________'
@@ -119,4 +118,4 @@ stop:
 postgres-bash:
 	@docker exec -it dataeng-postgres bash
 
-run-db-final-project: postgres-create flask-create airflow-create spark-create
+run-db-final-project: postgres-create && sleep 5 && flask-create && airflow-create && spark-create
