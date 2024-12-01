@@ -3,6 +3,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
+from airflow.operators.bash import BashOperator
 from datetime import datetime, timedelta
 
 default_args = {
@@ -56,11 +57,23 @@ with DAG(
     start = EmptyOperator(task_id='start')
     
     end = EmptyOperator(task_id='end')
+    
+    migrate_dump_task = BashOperator(
+        task_id='migrate_dump',
+        bash_command='../bash_scripts/data_dump.sh'
+    )
+    
+    migrate_load_task = BashOperator(
+        task_id='migrate_load',
+        bash_command='../bash_scripts/data_load.sh'
+    )
 
     migrate_task = PythonOperator(
         task_id='migrate_database',
         python_callable=migrate_db
     )
+    
+    start >> migrate_dump_task >> migrate_load_task >> end
 
-    start >> migrate_task >> end
+    # start >> migrate_task >> end
 
