@@ -15,16 +15,15 @@ docker-build-arm:
 	@echo '__________________________________________________________'
 	@docker build -t dataeng-dibimbing/spark -f ./docker/Dockerfile.spark .
 	@echo '__________________________________________________________'
-	@docker build -t dataeng-dibimbing/airflow -f ./docker/Dockerfile.airflow-arm .
+	@docker build -t dataeng-dibimbing/airflow -f ./docker/Dockerfile.airflow .
 	@echo '__________________________________________________________'
-	@docker build -t dataeng-dibimbing/jupyter -f ./docker/Dockerfile.jupyter .
-	@echo '==========================================================='
 	@docker build -t dataeng-dibimbing/flask -f ./docker/Dockerfile.flask .
 	@echo '==========================================================='
 	@docker build -t dataeng-dibimbing/dashboard -f ./docker/Dockerfile.dashboard .
 	@echo '==========================================================='
 
-dashboard:
+dashboard: dashboard-create
+dashboard-create:
 	@echo '__________________________________________________________'
 	@echo 'Creating Dashboard Instance ...'
 	@echo '__________________________________________________________'
@@ -57,7 +56,7 @@ airflow-create:
 	@docker compose -f ./docker/docker-compose-airflow.yml --env-file .env up
 	@echo '==========================================================='
 
-postgres: postgres-create postgres-create-warehouse postgres-create-table postgres-ingest-csv
+postgres: postgres-create
 
 postgres-create:
 	@docker compose -f ./docker/docker-compose-postgres.yml --env-file .env up -d
@@ -68,6 +67,7 @@ postgres-create:
 		echo 'Main Postgres Account	: ${POSTGRES_USER}' &&\
 		echo 'Main Postgres password	: ${POSTGRES_PASSWORD}' &&\
 		echo 'Main Postgres Db		: ${POSTGRES_DB}'
+	@echo '__________________________________________________________'
 	@echo 'Analysis Postgres container created at port ${POSTGRES_ANALYSIS_PORT}...'
 	@echo '__________________________________________________________'
 	@echo 'Analysis Postgres Docker Host	: ${POSTGRES_ANALYSIS_CONTAINER_NAME}' &&\
@@ -88,6 +88,27 @@ postgres-create:
 		echo 'Source Postgres Db		: ${POSTGRES_SOURCE_DB}'
 	@sleep 5
 	@echo '==========================================================='
+
+postgres-create-table:
+	@echo '__________________________________________________________'
+	@echo 'Creating tables in main postgres...'
+	@echo '_________________________________________'
+	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/schema_ddl.sql
+	@echo '==========================================================='
+	@echo '__________________________________________________________'
+	@echo 'Creating tables in replica postgres...'
+	@echo '_________________________________________'
+	@docker exec -it ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -f sql/schema_ddl.sql
+	@echo '==========================================================='
+
+connect-main-postgres:
+	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+
+connect-replica-postgres:
+	@docker exec -it ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB}
+
+connect-analysis-postgres:
+	@docker exec -it ${POSTGRES_ANALYSIS_CONTAINER_NAME} psql -U ${POSTGRES_ANALYSIS_USER} -d ${POSTGRES_ANALYSIS_DB}
 
 clean:
 	@bash ./scripts/goodnight.sh
