@@ -3,6 +3,19 @@ services:
     image: dataeng-dibimbing/flask
     container_name: ${FLASK_CONTAINER_NAME}
     hostname: ${FLASK_CONTAINER_NAME}
-    command: flask
+    command: gunicorn --bind 0.0.0.0:8000 app:app
+    volumes:
+      - ../flask_endpoint:/app
     ports:
       - ${FLASK_PORT}:8000
+    networks:
+      - dataeng-network
+    environment:
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - DATAENG_POSTGRES_URI=${DATAENG_POSTGRES_URI}
+
+networks:
+  dataeng-network:
+    driver: bridge
+    external: true

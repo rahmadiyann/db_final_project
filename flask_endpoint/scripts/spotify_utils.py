@@ -78,7 +78,7 @@ def iso_to_unix_ms(iso_string):
     dt = datetime.fromisoformat(iso_string.replace('Z', '+00:00'))
     return int(dt.timestamp() * 1000)
     
-def get_recent_played(session: Session) -> dict | None:
+def get_recent_played(session: Session, limit: int = 20) -> dict | None:
     """
     Get recent played songs from Spotify API.
     
@@ -92,9 +92,9 @@ def get_recent_played(session: Session) -> dict | None:
     sp = spotipy.Spotify(auth=access_token)
     last_fetched = session.query(Token).first().last_fetched
     try:
-        data = sp.current_user_recently_played(after=last_fetched)
+        data = sp.current_user_recently_played(after=last_fetched, limit=limit)
         if data['items'] == []:
-            session.query(Token).update({'last_fetched': int(time.time())})
+            session.query(Token).update({'last_fetched': (int(time.time()) * 1000)})
             session.commit()
             return None
         session.query(Token).update({'last_fetched': iso_to_unix_ms(data['items'][0]['played_at'])})
@@ -121,11 +121,12 @@ def get_song_detail(session: Session, song_id: str) -> dict | None:
         data = sp.track(song_id)
         name, disc_number, duration_ms, explicit, external_urls, preview_url, popularity = data['name'], data['disc_number'], data['duration_ms'], data['explicit'], data['external_urls']['spotify'], data['preview_url'], data['popularity']
         return {
-            'name': name,
+            'song_id': song_id,
+            'title': name,
             'disc_number': disc_number,
             'duration_ms': duration_ms,
             'explicit': explicit,
-            'external_urls': external_urls,
+            'external_url': external_urls,
             'preview_url': preview_url,
             'popularity': popularity
         }
@@ -148,12 +149,13 @@ def get_artist_detail(session: Session, artist_id: str) -> dict | None:
     sp = spotipy.Spotify(auth=access_token)
     try:
         data = sp.artist(artist_id)
-        name, external_urls, followers, images, popularity = data['name'], data['external_urls']['spotify'], data['followers']['total'], data['images'], data['popularity']
+        name, external_url, follower_count, image_url, popularity = data['name'], data['external_urls']['spotify'], data['followers']['total'], data['images'][0]['url'], data['popularity']
         return {
+            'artist_id': artist_id,
             'name': name,
-            'external_urls': external_urls,
-            'followers': followers,
-            'images': images,
+            'external_url': external_url,
+            'follower_count': follower_count,
+            'image_url': image_url,
             'popularity': popularity
         }
     except Exception as e:
@@ -175,12 +177,14 @@ def get_album_detail(session: Session, album_id: str) -> dict | None:
     sp = spotipy.Spotify(auth=access_token)
     try:
         data = sp.album(album_id)
-        name, total_tracks, external_urls, images, label, popularity = data['name'], data['total_tracks'], data['external_urls']['spotify'], data['images'], data['label'], data['popularity']
+        name, total_tracks, release_date, external_urls, image_url, label, popularity = data['name'], data['total_tracks'], data['release_date'], data['external_urls']['spotify'], data['images'][0]['url'], data['label'], data['popularity']
         return {
-            'name': name,
+            'album_id': album_id,
+            'title': name,
             'total_tracks': total_tracks,
-            'external_urls': external_urls,
-            'images': images,
+            'release_date': release_date,
+            'external_url': external_urls,
+            'image_url': image_url,
             'label': label,
             'popularity': popularity
         }

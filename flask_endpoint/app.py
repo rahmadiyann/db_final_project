@@ -48,7 +48,8 @@ def callback():
 
 @app.route('/recent_played')
 def recent_played():
-    data = get_recent_played(curr_session)
+    limit = request.args.get('limit', 20)
+    data = get_recent_played(curr_session, limit)
     if not data:
         return jsonify({'error': 'No recent played songs'}), 404
     
@@ -58,16 +59,31 @@ def recent_played():
         song_id = item['track']['id']
         album_id = item['track']['album']['id']
         artist_id = item['track']['artists'][0]['id']
-        songs_detail = get_song_detail(curr_session, song_id)
-        albums_detail = get_album_detail(curr_session, album_id)
-        artists_detail = get_artist_detail(curr_session, artist_id)
         datas.append({
             'played_at': played_at,
-            'track': songs_detail,
-            'album': albums_detail,
-            'artist': artists_detail
+            'song_id': song_id,
+            'album_id': album_id,
+            'artist_id': artist_id
         })
     return jsonify(datas), 200
+
+@app.route('/song')
+def song_detail():
+    song_id = request.args.get('song_id')
+    data = get_song_detail(curr_session, song_id)
+    return jsonify(data), 200
+
+@app.route('/album')
+def album_detail():
+    album_id = request.args.get('album_id')
+    data = get_album_detail(curr_session, album_id)
+    return jsonify(data), 200
+
+@app.route('/artist')
+def artist_detail():
+    artist_id = request.args.get('artist_id')
+    data = get_artist_detail(curr_session, artist_id)
+    return jsonify(data), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
