@@ -48,3 +48,5 @@ next-env.d.ts
 
 .cache
 __pycache__/
+
+logs/
