@@ -52,19 +52,6 @@ jobs = [
         'script_path': '/spark-scripts/session_between_songs.py'
     }
 ]
-
-email_recipient = ['riansshole123@gmail.com', 'riansshole124@gmail.com', 'rahmadiyanmuhammad12@gmail.com', 'rahmadiyan.muhammad1@gmail.com']
-
-def email_operator(task_id, recipient_email, message, subject):
-    return PythonOperator(
-        task_id=task_id,
-        python_callable=send_email,
-        op_kwargs={
-            'recipient_email': recipient_email,
-            'message': message,
-            'subject': subject
-        }
-    )
     
 def spark_analysis(task_id: str, script_path: str) -> SparkSubmitOperator:
     return SparkSubmitOperator(
@@ -89,23 +76,23 @@ with DAG(
     
     wait_analysis = EmptyOperator(task_id='wait_analysis', trigger_rule='all_success')
     
-    wait_email = EmptyOperator(task_id='wait_email', trigger_rule='all_success')
+    send_email = PythonOperator(
+        task_id='send_email',
+        python_callable=send_email,
+        op_kwargs={
+            'message': 'This is a test email',
+            'subject': 'Test Email'
+        },
+        dag=dag
+    )
     
     for job in jobs:
         analyze = spark_analysis(job['task_id'], job['script_path'])
         
         start >> analyze >> wait_analysis
         
-    for email in email_recipient:
-        send_analysis_email = email_operator(
-            task_id=f'send_analysis_email_to_{email}',
-            recipient_email=email,
-            message='This is a test email',
-            subject='Test Email'
-        )
-        
-        wait_analysis >> send_analysis_email >> wait_email
+
     
-    wait_email >> end
+    wait_analysis >> send_email >> end
 
 
