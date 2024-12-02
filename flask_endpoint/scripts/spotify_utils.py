@@ -215,3 +215,6 @@ def get_auth_url():
         str: Authorization URL
     """
     return create_spotify_oauth().get_authorize_url()
+
+def get_listening_stats(session: Session):
+    pass

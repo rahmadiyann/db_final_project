@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, redirect, url_for, session
-from scripts.spotify_utils import get_album_detail, get_artist_detail, get_auth_url, get_callback, get_recent_played, get_song_detail, iso_to_unix_ms
+from scripts.spotify_utils import get_album_detail, get_artist_detail, get_auth_url, get_callback, get_recent_played, get_song_detail, iso_to_unix_ms, get_listening_stats
 from scripts.db_utils import session as db_session
 from scripts.models import Token
 import secrets
@@ -89,6 +89,12 @@ def artist_detail():
     artist_id = request.args.get('artist_id')
     data = get_artist_detail(curr_session, artist_id)
     return jsonify(data), 200
+
+@app.route('/spotify_analytics')
+def spotify_analytics():
+    # data = get_listening_stats(curr_session)
+    # return jsonify(data), 200
+    return 'Will be implemented soon'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
