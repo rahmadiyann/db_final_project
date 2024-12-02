@@ -1,0 +1,31 @@
+{
+  "name": "postgres-source-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.hostname": "dataeng-postgres",
+    "database.port": "5432",
+    "database.user": "user",
+    "database.password": "password",
+    "database.dbname": "postgres_db",
+    "database.server.name": "dataeng-postgres",
+    "schema.include.list": "public",
+    "table.include.list": "public.*",
+    "plugin.name": "pgoutput",
+    "slot.name": "debezium_slot",
+    "publication.name": "dbz_publication",
+
+    "topic.prefix": "dataeng-postgres",
+    "publication.autocreate.mode": "all_tables",
+
+    "schema.refresh.mode": "columns_diff_exclude_unchanged_toast",
+    "provide.transaction.metadata": true,
+    "snapshot.mode": "initial",
+    "snapshot.fetch.size": "10240",
+    "max.batch.size": "20480",
+    "max.queue.size": "81920",
+    "heartbeat.interval.ms": "30000",
+    "errors.retry.timeout": "300",
+    "errors.retry.delay.max.ms": "1000"
+  }
+}
