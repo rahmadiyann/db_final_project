@@ -1,9 +1,7 @@
-from python_scripts.db_migration import migrate_db
 from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.bash import BashOperator
+from airflow.operators.sql import SQLCheckOperator
 from datetime import datetime, timedelta
 
 default_args = {
@@ -16,64 +14,67 @@ default_args = {
     'retry_delay': timedelta(minutes=5)
 }
 
-def get_db_params():
-    # Get database parameters from Airflow Variables
-    source_db = Variable.get('source_params')
-    target_db = Variable.get('target_params')
-    
-    if not source_db or not target_db:
-        raise ValueError("No database parameters found in Airflow Variables")
-    
-    source_params = {
-        'dbname': source_db['database'],
-        'user': source_db['user'],
-        'password': source_db['password'],
-        'host': source_db['host'],
-        'port': source_db['port']
-    }
-    
-    target_params = {
-        'dbname': target_db['database'],
-        'user': target_db['user'],
-        'password': target_db['password'],
-        'host': target_db['host'],
-        'port': target_db['port']
-    }
-    
-    return source_params, target_params
+proj_dir='/opt/airflow'
 
-def migrate_db(**context):
-    source_params, target_params = get_db_params()
-    migrate_db(source_params, target_params)
+tables = ['dim_album', 'dim_song', 'dim_artist', 'fact_history']
 
 with DAG(
     'db_initial_migration',
     default_args=default_args,
-    description='DAG to migrate database using configurable parameters',
+    description='DAG to migrate database',
     schedule_interval=None,
-    catchup=False
+    catchup=False,
+    concurrency=1,
+    max_active_runs=1
 ) as dag:
     
     start = EmptyOperator(task_id='start')
     
     end = EmptyOperator(task_id='end')
     
-    migrate_dump_task = BashOperator(
-        task_id='migrate_dump',
-        bash_command='../bash_scripts/data_dump.sh'
+    wait_count_check = EmptyOperator(task_id='wait_count_check', trigger_rule='all_success')
+    
+    wait_migrate_dump = EmptyOperator(task_id='wait_migrate_dump', trigger_rule='all_success')
+    
+    wait_migrate_load_dim_tables = EmptyOperator(task_id='wait_migrate_load_dim_tables', trigger_rule='all_success')
+    
+    for table in tables:
+        migrate_dump_task = BashOperator(
+            task_id=f'source_to_landing_{table}',
+            bash_command=f'sh {proj_dir}/bash_scripts/data_dump.sh {table} '
+        )
+    
+        start >> migrate_dump_task >> wait_migrate_dump
+    
+    for table in tables:
+        if table == 'fact_history':
+            pass
+        else:
+            migrate_load_dim_table = BashOperator(
+                task_id=f'landing_to_main_{table}',
+                bash_command=f'sh {proj_dir}/bash_scripts/data_load.sh {table} '
+            )
+        
+        wait_migrate_dump >> migrate_load_dim_table >> wait_migrate_load_dim_tables
+    
+    migrate_load_fact = BashOperator(
+        task_id='landing_to_main_fact_history',
+        bash_command=f'sh {proj_dir}/bash_scripts/data_load.sh fact_history '
     )
     
-    migrate_load_task = BashOperator(
-        task_id='migrate_load',
-        bash_command='../bash_scripts/data_load.sh'
-    )
-
-    migrate_task = PythonOperator(
-        task_id='migrate_database',
-        python_callable=migrate_db
+    wait_migrate_load_dim_tables >> migrate_load_fact
+    
+    for table in tables:
+        count_check = SQLCheckOperator(
+            task_id=f'{table}_count_check',
+            sql=f'SELECT COUNT(*) FROM {table}',
+            conn_id='main_postgres'
+        )
+        migrate_load_fact >> count_check >> wait_count_check
+        
+    clean_up_task = BashOperator(
+        task_id='clean_up',
+        bash_command=f'rm -rf {proj_dir}/data/*'
     )
     
-    start >> migrate_dump_task >> migrate_load_task >> end
-
-    # start >> migrate_task >> end
-
+    wait_count_check >> clean_up_task >> end
