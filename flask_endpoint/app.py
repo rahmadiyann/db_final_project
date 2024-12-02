@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, redirect, url_for, session
-from scripts.spotify_utils import get_album_detail, get_artist_detail, get_auth_url, get_callback, get_recent_played, get_song_detail
+from scripts.spotify_utils import get_album_detail, get_artist_detail, get_auth_url, get_callback, get_recent_played, get_song_detail, iso_to_unix_ms
 from scripts.db_utils import session as db_session
 from scripts.models import Token
 import secrets
@@ -49,22 +49,27 @@ def callback():
 @app.route('/recent_played')
 def recent_played():
     limit = request.args.get('limit', 20)
-    data = get_recent_played(curr_session, limit)
+    last_fetch_time = request.args.get('last_fetch_time', None)
+    data = get_recent_played(curr_session, limit, last_fetch_time)
     if not data:
         return jsonify({'error': 'No recent played songs'}), 404
     
-    datas = []
+    datas = {}
+    song_data = []
     for item in data['items']:
         played_at = item['played_at']
         song_id = item['track']['id']
         album_id = item['track']['album']['id']
         artist_id = item['track']['artists'][0]['id']
-        datas.append({
+        song_data.append({
             'played_at': played_at,
             'song_id': song_id,
             'album_id': album_id,
             'artist_id': artist_id
         })
+    datas['last_fetch_time'] = iso_to_unix_ms(song_data[0]['played_at'])
+    datas['last_fetch_time_iso'] = song_data[0]['played_at']
+    datas['data'] = song_data
     return jsonify(datas), 200
 
 @app.route('/song')

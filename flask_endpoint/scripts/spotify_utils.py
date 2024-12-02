@@ -78,7 +78,7 @@ def iso_to_unix_ms(iso_string):
     dt = datetime.fromisoformat(iso_string.replace('Z', '+00:00'))
     return int(dt.timestamp() * 1000)
     
-def get_recent_played(session: Session, limit: int = 20) -> dict | None:
+def get_recent_played(session: Session, limit: int = 20, last_fetch_time: int = 0) -> dict | None:
     """
     Get recent played songs from Spotify API.
     
@@ -90,16 +90,16 @@ def get_recent_played(session: Session, limit: int = 20) -> dict | None:
     """
     access_token = load_access_token(session)
     sp = spotipy.Spotify(auth=access_token)
-    last_fetched = session.query(Token).first().last_fetched
+    # last_fetched = session.query(Token).first().last_fetched
     try:
-        data = sp.current_user_recently_played(after=last_fetched, limit=limit)
-        if data['items'] == []:
+        song_data = sp.current_user_recently_played(after=last_fetch_time, limit=limit)
+        if song_data['items'] == []:
             session.query(Token).update({'last_fetched': (int(time.time()) * 1000)})
             session.commit()
             return None
-        session.query(Token).update({'last_fetched': iso_to_unix_ms(data['items'][0]['played_at'])})
+        session.query(Token).update({'last_fetched': iso_to_unix_ms(song_data['items'][0]['played_at'])})
         session.commit()
-        return data
+        return song_data
     except Exception as e:
         logger.error(f"Error fetching recent played: {e}")
         return None
