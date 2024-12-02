@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from helper.send_email import send_email
+from helper.send_email import sendEmail
 from airflow.operators.empty import EmptyOperator
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from datetime import datetime, timedelta
@@ -11,7 +11,7 @@ local_tz = pendulum.timezone("Asia/Jakarta")
 default_args = {
     'owner': 'rahmadiyan',
     'depends_on_past': False,
-    'start_date': datetime(2024, 12, 5, tz=local_tz),
+    'start_date': datetime(2024, 12, 2, tzinfo=local_tz),
     'email_on_failure': True,
     'email_on_retry': True,
     'retries': 2,
@@ -78,7 +78,7 @@ with DAG(
     
     send_email = PythonOperator(
         task_id='send_email',
-        python_callable=send_email,
+        python_callable=sendEmail,
         op_kwargs={
             'message': 'This is a test email',
             'subject': 'Test Email'
