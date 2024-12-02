@@ -1,13 +1,18 @@
 FROM debezium/connect:2.4
 
-# Create directory and install PostgreSQL JDBC driver
-RUN mkdir -p /kafka/connect/jdbc-connector/ && \
-    curl -k -L -o /kafka/connect/jdbc-connector/postgresql-42.6.0.jar https://jdbc.postgresql.org/download/postgresql-42.6.0.jar
+USER root
+# Create directory for JDBC connector
+RUN mkdir -p /kafka/connect/jdbc-connector
 
-# Install Kafka Connect JDBC connector
-RUN curl -k -L -o /tmp/kafka-connect-jdbc.tar.gz https://packages.confluent.io/maven/io/confluent/kafka-connect-jdbc/10.7.4/kafka-connect-jdbc-10.7.4.jar && \
-    mkdir -p /kafka/connect/kafka-connect-jdbc && \
-    mv /tmp/kafka-connect-jdbc.tar.gz /kafka/connect/kafka-connect-jdbc/kafka-connect-jdbc-10.7.4.jar && \
-    rm -f /tmp/kafka-connect-jdbc.tar.gz
+# Copy PostgreSQL JDBC driver
+COPY jars/pg_jdbc.jar /kafka/connect/jdbc-connector/
 
-    
+# Download and install the Debezium JDBC connector
+RUN curl -k -L -o /tmp/debezium-connector-jdbc.tar.gz \
+    https://repo1.maven.org/maven2/io/debezium/debezium-connector-jdbc/3.0.4.Final/debezium-connector-jdbc-3.0.4.Final-plugin.tar.gz && \
+    tar xvf /tmp/debezium-connector-jdbc.tar.gz -C /kafka/connect/ && \
+    rm -f /tmp/debezium-connector-jdbc.tar.gz
+
+# Set proper permissions
+RUN chmod -R +r /kafka/connect/jdbc-connector/
+RUN chmod -R +r /kafka/connect/debezium-connector-jdbc/

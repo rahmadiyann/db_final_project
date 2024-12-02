@@ -1,22 +1,4 @@
 services:
-  # zookeeper:
-  #   container_name: zookeeper
-  #   image: quay.io/debezium/zookeeper:${DEBEZIUM_VERSION}
-  #   ports:
-  #     - 2181:2181
-  #     - 2888:2888
-  #     - 3888:3888
-
-  # kafka:
-  #   container_name: kafka
-  #   image: quay.io/debezium/kafka:${DEBEZIUM_VERSION}
-  #   ports:
-  #     - 9092:9092
-  #   depends_on:
-  #     - zookeeper
-  #   environment:
-  #     - ZOOKEEPER_CONNECT=zookeeper:2181
-
   dibimbing-dataeng-postgres:
     image: quay.io/debezium/example-postgres:${POSTGRES_VERSION}
     container_name: ${POSTGRES_CONTAINER_NAME}
@@ -70,22 +52,6 @@ services:
       - ../data:/data
     ports:
       - ${POSTGRES_ANALYSIS_PORT}:5433
-
-  # connect:
-  #   container_name: connect
-  #   image: quay.io/debezium/connect:${DEBEZIUM_VERSION}
-  #   ports:
-  #     - 8083:8083
-  #   depends_on:
-  #     - kafka
-  #     - mysql
-  #     - postgres
-  #   environment:
-  #     - BOOTSTRAP_SERVERS=kafka:9092
-  #     - GROUP_ID=1
-  #     - CONFIG_STORAGE_TOPIC=my_connect_configs
-  #     - OFFSET_STORAGE_TOPIC=my_connect_offsets
-  #     - STATUS_STORAGE_TOPIC=my_connect_statuses
 
 networks:
   dataeng-network:
