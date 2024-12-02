@@ -115,16 +115,20 @@ postgres-create-table:
 postgres-full-insert: postgres-insert-album postgres-insert-song postgres-insert-artist postgres-insert-history
 postgres-insert-album:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_album.sql
+	@sleep 5
 
 postgres-insert-song:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_song.sql
+	@sleep 5
 
 postgres-insert-artist:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_artist.sql
+	@sleep 5
 
 postgres-insert-history:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_history.sql
-
+	@sleep 5
+	
 # Connecting to postgres containers
 connect-main-postgres:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
