@@ -53,6 +53,24 @@ services:
     ports:
       - ${POSTGRES_ANALYSIS_PORT}:5433
 
+  dibimbing-dataeng-postgres-airflow:
+    image: quay.io/debezium/example-postgres:${POSTGRES_VERSION}
+    container_name: ${POSTGRES_AIRFLOW_CONTAINER_NAME}
+    restart: unless-stopped
+    hostname: ${POSTGRES_AIRFLOW_CONTAINER_NAME}
+    networks:
+      - dataeng-network
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_AIRFLOW_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_AIRFLOW_USER}
+      - POSTGRES_DB=${POSTGRES_AIRFLOW_DB}
+      - PGDATA=/var/lib/postgresql/data/airflow_pgdata
+    volumes:
+      - ../sql:/sql
+      - ../data:/data
+    ports:
+      - ${POSTGRES_AIRFLOW_PORT}:5435
+
 networks:
   dataeng-network:
     driver: bridge

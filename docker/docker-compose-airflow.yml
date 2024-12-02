@@ -8,7 +8,7 @@ services:
     env_file:
       - ../.env
     environment:
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_CONTAINER_NAME}/${POSTGRES_DB}
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_AIRFLOW_USER}:${POSTGRES_AIRFLOW_PASSWORD}@${POSTGRES_AIRFLOW_CONTAINER_NAME}/${POSTGRES_AIRFLOW_DB}
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -22,10 +22,11 @@ services:
     volumes:
       - ../dags:/opt/airflow/dags
       - ../logs:/opt/airflow/logs
-      - ../spark_scripts:/spark_scripts
-      - ../bash_scripts:/bash_scripts
+      - ../spark_scripts:/opt/airflow/spark_scripts
+      - ../bash_scripts:/opt/airflow/bash_scripts
       - ../scripts:/scripts
-      - ../data:/data
+      - ../data:/opt/airflow/data
+      - ../jars:/opt/airflow/jars
   webserver:
     image: dataeng-dibimbing/airflow
     container_name: ${AIRFLOW_WEBSERVER_CONTAINER_NAME}
@@ -37,7 +38,7 @@ services:
     env_file:
       - ../.env
     environment:
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_CONTAINER_NAME}/${POSTGRES_DB}
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_AIRFLOW_USER}:${POSTGRES_AIRFLOW_PASSWORD}@${POSTGRES_AIRFLOW_CONTAINER_NAME}/${POSTGRES_AIRFLOW_DB}
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -51,11 +52,11 @@ services:
     volumes:
       - ../dags:/opt/airflow/dags
       - ../logs:/opt/airflow/logs
-      - ../spark_scripts:/spark_scripts
-      - ../bash_scripts:/bash_scripts
+      - ../spark_scripts:/opt/airflow/spark_scripts
+      - ../bash_scripts:/opt/airflow/bash_scripts
       - ../scripts:/scripts
       - ../jars:/opt/airflow/jars
-      - ../data:/data
+      - ../data:/opt/airflow/data
     ports:
       - ${AIRFLOW_WEBSERVER_PORT}:8080
 
