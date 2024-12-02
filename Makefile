@@ -60,6 +60,8 @@ airflow-create:
 	@echo '__________________________________________________________'
 	@docker compose -f ./docker/docker-compose-airflow.yml --env-file .env up -d
 	@echo '==========================================================='
+	@sleep 10
+	@echo 'Airflow websrver is ready to be accessed on http://localhost:${AIRFLOW_WEBSERVER_PORT}'
 
 # Creating the postgres instance
 postgres: postgres-create postgres-create-table
@@ -128,7 +130,7 @@ postgres-insert-artist:
 postgres-insert-history:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_history.sql
 	@sleep 5
-	
+
 # Connecting to postgres containers
 connect-main-postgres:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
@@ -136,13 +138,41 @@ connect-replica-postgres:
 	@docker exec -it ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB}
 connect-analysis-postgres:
 	@docker exec -it ${POSTGRES_ANALYSIS_CONTAINER_NAME} psql -U ${POSTGRES_ANALYSIS_USER} -d ${POSTGRES_ANALYSIS_DB}
+connect-airflow-postgres:
+	@docker exec -it ${POSTGRES_AIRFLOW_CONTAINER_NAME} psql -U ${POSTGRES_AIRFLOW_USER} -d ${POSTGRES_AIRFLOW_DB}
 
-# Checking the count of tables in the replica postgres
+# Checking the count comparison between main and replica postgres
 postgres-check-count:
-	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'SELECT COUNT(*) FROM "dataeng-postgres_public_dim_album";'
-	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'SELECT COUNT(*) FROM "dataeng-postgres_public_dim_artist";'
-	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'SELECT COUNT(*) FROM "dataeng-postgres_public_dim_song";'
-	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'SELECT COUNT(*) FROM "dataeng-postgres_public_fact_history";'
+	@printf "Table\t\tMain DB\t\tReplica DB\n"
+	@printf "%s\n" "----------------------------------------"
+	@printf "dim_album\t"
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -t -c 'SELECT COUNT(*) FROM "dim_album";' | tr -d '\n' | xargs printf "%s\t\t"
+	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -t -c 'SELECT COUNT(*) FROM "dataeng-postgres_public_dim_album";' | xargs printf "%s\n"
+	
+	@printf "dim_artist\t"
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -t -c 'SELECT COUNT(*) FROM "dim_artist";' | tr -d '\n' | xargs printf "%s\t\t"
+	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -t -c 'SELECT COUNT(*) FROM "dataeng-postgres_public_dim_artist";' | xargs printf "%s\n"
+	
+	@printf "dim_song\t"
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -t -c 'SELECT COUNT(*) FROM "dim_song";' | tr -d '\n' | xargs printf "%s\t\t"
+	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -t -c 'SELECT COUNT(*) FROM "dataeng-postgres_public_dim_song";' | xargs printf "%s\n"
+	
+	@printf "fact_history\t"
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -t -c 'SELECT COUNT(*) FROM "fact_history";' | tr -d '\n' | xargs printf "%s\t\t"
+	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -t -c 'SELECT COUNT(*) FROM "dataeng-postgres_public_fact_history";' | xargs printf "%s\n"
+
+postgres-truncate: postgres-truncate-main postgres-truncate-replica
+postgres-truncate-main:
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "dim_album" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "dim_artist" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "dim_song" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "fact_history";'
+
+postgres-truncate-replica:
+	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_dim_album" CASCADE;'
+	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_dim_artist" CASCADE;'
+	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_dim_song" CASCADE;'
+	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_fact_history";'
 
 # Debezium related commands
 # Creating Debezium instance and topics necessary
