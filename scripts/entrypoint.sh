@@ -22,11 +22,15 @@ airflow connections add 'analysis_postgres' \
 --conn-host $POSTGRES_ANALYSIS_CONTAINER_NAME \
 --conn-port $POSTGRES_ANALYSIS_PORT \
 --conn-schema $POSTGRES_DB
+
 airflow variables set 'email_config' \
---value '{"EMAIL_SENDER": "'$EMAIL_SENDER'", "EMAIL_PASSWORD": '$EMAIL_PASSWORD'}'
+-v '{"EMAIL_SENDER": "'$EMAIL_SENDER'", "EMAIL_PASSWORD": '$EMAIL_PASSWORD'}'
+
+airflow variables set 'proj_dir' \
+-v '/opt/airflow'
 
 airflow variables set 'email_recipient' \
---value '{{"EMAIL_RECIPIENT": "'$EMAIL_RECIPIENT'"}}'
+-v '{{"EMAIL_RECIPIENT": "'$EMAIL_RECIPIENT'"}}'
 
 export SPARK_FULL_HOST_NAME="spark://$SPARK_MASTER_HOST_NAME"
 airflow connections add 'spark_main' \
