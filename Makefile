@@ -129,7 +129,6 @@ postgres-insert-artist:
 
 postgres-insert-history:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_history.sql
-	@sleep 5
 
 # Connecting to postgres containers
 connect-main-postgres:
@@ -265,6 +264,6 @@ postgres-bash:
 	@docker exec -it dataeng-postgres bash
 
 # Running the db final project
-run-db-final-project: postgres-create && sleep 5 && flask-create && airflow-create && spark-create
+run-db-final-project: postgres-create debezium-create debezium-register-all flask-create airflow-create spark-create
 
 # postgres_db=# insert into dim_artist(artist_id, name, external_url, follower_count, image_url, popularity) VALUES('a', 'a', 'a', 1, 'a', 10);
