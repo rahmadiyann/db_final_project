@@ -18,10 +18,50 @@ services:
       - zookeeper
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+    networks:
+      - dataeng-network
+
+  ksqldb:
+    image: confluentinc/ksqldb-server:0.28.2
+    container_name: ${KSQL_CONTAINER_NAME}
+    hostname: ${KSQL_HOST}
+    depends_on:
+      - kafka
+    ports:
+      - "8088:8088"
+    environment:
+      - KSQL_BOOTSTRAP_SERVERS=kafka:9092
+      - KSQL_LISTENERS=http://0.0.0.0:8088
+      - KSQL_KSQL_SERVICE_ID=ksqldb_
+      - KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE=true
+      - KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE=true
+      - KSQL_COMMIT_INTERVAL_MS=2000
+      - KSQL_CACHE_MAX_BYTES_BUFFERING=10000000
+    networks:
+      - dataeng-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: ${KAFKA_CONTAINER_NAME}_UI
+    depends_on:
+      - kafka
+      - ksqldb
+    ports:
+      - "8183:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_KSQLDBSERVER=http://${KSQL_HOST}:8088
+      - KAFKA_CLUSTERS_0_METRICS_PORT=9997
     networks:
       - dataeng-network
 
