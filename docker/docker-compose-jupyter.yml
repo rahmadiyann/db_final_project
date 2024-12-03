@@ -1,0 +1,21 @@
+services:
+  dibimbing-dataeng-jupyter:
+    container_name: ${JUPYTER_CONTAINER_NAME}
+    hostname: ${JUPYTER_CONTAINER_NAME}
+    image: dataeng-dibimbing/jupyter
+    environment:
+      - JUPYTER_ALLOW_INSECURE_WRITES=true
+    env_file:
+      - ../.env
+    ports:
+      - ${JUPYTER_PORT}:8888
+      - 4040:4040
+      - 4041:4041
+    volumes:
+      - ../jars:/opt/jars
+      - ../notebooks:/home/jovyan
+
+networks:
+  default:
+    name: dataeng-network
+    external: true
