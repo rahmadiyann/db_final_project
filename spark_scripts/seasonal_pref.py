@@ -1,5 +1,5 @@
 from pyspark.sql import functions as F
-from spark_scripts.utils.spark_helper import create_spark_session, get_main_db_properties, get_analysis_db_properties, load_table, get_last_month_data
+from spark_scripts.utils.spark_helper import create_spark_session, load_table, get_last_month_data, write_table
 
 query = """
 SELECT 
@@ -18,7 +18,7 @@ ORDER BY extract(month from played_at);
 def analyze_seasonal():
     spark = create_spark_session("Seasonal Listening Analysis")
     try:
-        fact_history = load_table(spark, "fact_history", get_main_db_properties())
+        fact_history = load_table(spark, "fact_history")
         fact_last_month = get_last_month_data(fact_history)
 
         monthly_stats = fact_last_month.groupBy(
@@ -37,14 +37,9 @@ def analyze_seasonal():
 
         print("=== Monthly Listening Statistics ===")
         monthly_stats.show(truncate=False)
+
+        write_table(monthly_stats, "seasonal_listening_analysis")
         
-        monthly_stats.write \
-            .mode("overwrite") \
-            .jdbc(
-                url=get_analysis_db_properties()["url"],
-                table="seasonal_listening_analysis",
-                properties=get_analysis_db_properties()
-            )
     finally:
         spark.stop()
 

@@ -1,5 +1,5 @@
 from pyspark.sql import functions as F
-from spark_scripts.utils.spark_helper import create_spark_session, get_main_db_properties, get_analysis_db_properties, load_table, get_last_month_data
+from spark_scripts.utils.spark_helper import create_spark_session, load_table, get_last_month_data, write_table
 
 query = """
 SELECT
@@ -17,8 +17,8 @@ def analyze_release_years():
     
     try:
         # Load tables
-        fact_history = load_table(spark, "fact_history", get_main_db_properties())
-        dim_album = load_table(spark, "dim_album", get_main_db_properties())
+        fact_history = load_table(spark, "fact_history")
+        dim_album = load_table(spark, "dim_album")
         
         # Get last month's data
         fact_last_month = get_last_month_data(fact_history)
@@ -35,13 +35,8 @@ def analyze_release_years():
         # Display results
         print("=== Release Year Distribution ===")
         year_distribution.show(truncate=False)
-        year_distribution.write \
-            .mode("overwrite") \
-            .jdbc(
-                url=get_analysis_db_properties()["url"],
-                table="album_release_year_play_count",
-                properties=get_analysis_db_properties()
-            )
+        
+        write_table(year_distribution, "album_release_year_play_count")
         
     finally:
         spark.stop()

@@ -1,6 +1,6 @@
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
-from spark_scripts.utils.spark_helper import create_spark_session, get_main_db_properties, get_analysis_db_properties, load_table, get_last_month_data
+from spark_scripts.utils.spark_helper import create_spark_session, load_table, get_last_month_data, write_table
 
 query = """
 WITH duration_categories AS (
@@ -27,8 +27,8 @@ ORDER BY play_count DESC;
 def analyze_duration():
     spark = create_spark_session("Song Duration Analysis")
     try:
-        fact_history = load_table(spark, "fact_history", get_main_db_properties())
-        dim_song = load_table(spark, "dim_song", get_main_db_properties())
+        fact_history = load_table(spark, "fact_history")
+        dim_song = load_table(spark, "dim_song")
         fact_last_month = get_last_month_data(fact_history)
 
         duration_distribution = fact_last_month.join(
@@ -47,13 +47,8 @@ def analyze_duration():
         print("=== Song Duration Distribution ===")
         duration_distribution.show(truncate=False)
         
-        duration_distribution.write \
-            .mode("overwrite") \
-            .jdbc(
-                url=get_analysis_db_properties()["url"],
-                table="song_duration_preference",
-                properties=get_analysis_db_properties()
-            )
+        write_table(duration_distribution, "song_duration_preference")
+
     finally:
         spark.stop()
 

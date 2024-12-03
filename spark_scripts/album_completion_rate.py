@@ -1,5 +1,5 @@
 from pyspark.sql import functions as F
-from spark_scripts.utils.spark_helper import create_spark_session, get_main_db_properties, load_table, get_last_month_data, get_analysis_db_properties
+from spark_scripts.utils.spark_helper import create_spark_session, load_table, get_last_month_data, write_table
 
 query = """
 WITH album_stats AS (
@@ -36,9 +36,9 @@ LIMIT 10;
 def analyze_album_completion():
     spark = create_spark_session("Album Completion Analysis")
     try:
-        fact_history = load_table(spark, "fact_history", get_main_db_properties())
-        dim_album = load_table(spark, "dim_album", get_main_db_properties())
-        dim_artist = load_table(spark, "dim_artist", get_main_db_properties())
+        fact_history = load_table(spark, "fact_history")
+        dim_album = load_table(spark, "dim_album")
+        dim_artist = load_table(spark, "dim_artist")
         fact_last_month = get_last_month_data(fact_history)
 
         album_completion = fact_last_month.join(
@@ -46,7 +46,6 @@ def analyze_album_completion():
         ).join(
             dim_artist, "artist_id"
         ).groupBy(
-            "album_id", 
             dim_album.title.alias("album_title"), 
             dim_artist.name.alias("artist_name"), 
             "total_tracks"
@@ -70,13 +69,7 @@ def analyze_album_completion():
         print("=== Album Completion Analysis ===")
         album_completion.show(truncate=False)
         # Save results to the analysis database
-        album_completion.write \
-            .mode("overwrite") \
-            .jdbc(
-                url=get_analysis_db_properties()["url"],
-                table="album_completion_analysis",
-                properties=get_analysis_db_properties()
-            )
+        write_table(album_completion, "album_completion_analysis")
     finally:
         spark.stop()
 

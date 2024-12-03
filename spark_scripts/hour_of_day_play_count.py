@@ -1,6 +1,6 @@
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
-from spark_scripts.utils.spark_helper import create_spark_session, get_main_db_properties, get_analysis_db_properties, load_table, get_last_month_data
+from spark_scripts.utils.spark_helper import create_spark_session, load_table, get_last_month_data, write_table
 
 query = """
 SELECT 
@@ -18,7 +18,7 @@ def analyze_hourly_pattern():
     
     try:
         # Load fact_history table
-        fact_history = load_table(spark, "fact_history", get_main_db_properties())
+        fact_history = load_table(spark, "fact_history")
         
         # Get last month's data
         fact_last_month = get_last_month_data(fact_history)
@@ -37,13 +37,8 @@ def analyze_hourly_pattern():
         print("=== Hourly Listening Distribution ===")
         hour_distribution.show(24, False)
         
-        hour_distribution.write \
-            .mode("overwrite") \
-            .jdbc(
-                url=get_analysis_db_properties()["url"],
-                table="hour_of_day_listening_distribution",
-                properties=get_analysis_db_properties()
-            )
+        write_table(hour_distribution, "hour_of_day_listening_distribution")
+        
     finally:
         spark.stop()
 

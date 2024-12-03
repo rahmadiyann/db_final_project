@@ -1,6 +1,6 @@
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
-from spark_scripts.utils.spark_helper import create_spark_session, get_main_db_properties, get_analysis_db_properties, load_table, get_last_month_data
+from spark_scripts.utils.spark_helper import create_spark_session, load_table, get_last_month_data, write_table
 
 query = """
 WITH listening_sessions AS (
@@ -33,7 +33,7 @@ ORDER BY
 def analyze_sessions():
     spark = create_spark_session("Listening Session Analysis")
     try:
-        fact_history = load_table(spark, "fact_history", get_main_db_properties())
+        fact_history = load_table(spark, "fact_history")
         fact_last_month = get_last_month_data(fact_history)
 
         window_spec = Window.orderBy("played_at")
@@ -60,14 +60,9 @@ def analyze_sessions():
 
         print("=== Listening Session Analysis ===")
         session_analysis.show(truncate=False)
+
+        write_table(session_analysis, "session_between_songs")
         
-        session_analysis.write \
-            .mode("overwrite") \
-            .jdbc(
-                url=get_analysis_db_properties()["url"],
-                table="session_between_songs",
-                properties=get_analysis_db_properties()
-            )
     finally:
         spark.stop()
 

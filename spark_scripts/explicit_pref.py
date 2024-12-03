@@ -1,6 +1,6 @@
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
-from spark_scripts.utils.spark_helper import create_spark_session, get_main_db_properties, get_analysis_db_properties, load_table, get_last_month_data
+from spark_scripts.utils.spark_helper import create_spark_session, load_table, get_last_month_data, write_table
 
 query = """
 SELECT 
@@ -19,8 +19,8 @@ def analyze_explicit_content():
     
     try:
         # Load tables
-        fact_history = load_table(spark, "fact_history", get_main_db_properties())
-        dim_song = load_table(spark, "dim_song", get_main_db_properties())
+        fact_history = load_table(spark, "fact_history")
+        dim_song = load_table(spark, "dim_song")
         
         # Get last month's data
         fact_last_month = get_last_month_data(fact_history)
@@ -39,13 +39,7 @@ def analyze_explicit_content():
         print("=== Explicit Content Distribution ===")
         explicit_distribution.show(truncate=False)
         
-        explicit_distribution.write \
-            .mode("overwrite") \
-            .jdbc(
-                url=get_analysis_db_properties()["url"],
-                table="explicit_preference",
-                properties=get_analysis_db_properties()
-            )
+        write_table(explicit_distribution, "explicit_preference")
         
     finally:
         spark.stop()
