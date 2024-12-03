@@ -25,6 +25,29 @@ docker-build-arm:
 	@docker build -t dataeng-dibimbing/debezium -f ./docker/Dockerfile.debezium .
 	@echo '==========================================================='
 
+stop:
+	@echo '__________________________________________________________'
+	@echo 'Stopping Single Docker Container ...'
+	@echo '__________________________________________________________'
+	@if [ "$(service)" = "postgres" ]; then \
+		docker stop ${POSTGRES_CONTAINER_NAME} ${POSTGRES_REPLICA_CONTAINER_NAME} ${POSTGRES_ANALYSIS_CONTAINER_NAME}; \
+	elif [ "$(service)" = "spark" ]; then \
+		docker stop ${SPARK_CONTAINER_NAME}; \
+	elif [ "$(service)" = "airflow" ]; then \
+		docker stop ${AIRFLOW_CONTAINER_NAME}; \
+	elif [ "$(service)" = "flask" ]; then \
+		docker stop ${FLASK_CONTAINER_NAME}; \
+	elif [ "$(service)" = "dashboard" ]; then \
+		docker stop ${DASHBOARD_CONTAINER_NAME}; \
+	elif [ "$(service)" = "debezium" ]; then \
+		docker stop ${DEBEZIUM_CONTAINER_NAME}; \
+	elif [ "$(service)" = "jupyter" ]; then \
+		docker stop ${JUPYTER_CONTAINER_NAME}; \
+	else \
+		echo "Invalid service name. Available services: postgres, spark, airflow, flask, dashboard, debezium, jupyter"; \
+	fi
+	@echo '==========================================================='
+
 docker-build:
 	@echo '__________________________________________________________'
 	@echo 'Building Single Docker Image ...'
@@ -302,7 +325,7 @@ clean-images:
 	@docker images -q | xargs docker rmi -f
 
 # Stopping the containers
-stop:
+stop-all:
 	@docker ps -aq | xargs docker stop
 
 # Connecting to postgres container
