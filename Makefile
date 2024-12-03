@@ -10,7 +10,7 @@ help:
 # Building the docker images for arm-based machines
 docker-build-arm:
 	@echo '__________________________________________________________'
-	@echo 'Building Docker Images ...'
+	@echo 'Building All Docker Images ...'
 	@echo '__________________________________________________________'
 	@docker network inspect dataeng-network >/dev/null 2>&1 || docker network create dataeng-network
 	@echo '__________________________________________________________'
@@ -23,6 +23,48 @@ docker-build-arm:
 	@docker build -t dataeng-dibimbing/dashboard -f ./docker/Dockerfile.dashboard .
 	@echo '==========================================================='
 	@docker build -t dataeng-dibimbing/debezium -f ./docker/Dockerfile.debezium .
+	@echo '==========================================================='
+
+docker-build:
+	@echo '__________________________________________________________'
+	@echo 'Building Single Docker Image ...'
+	@echo '__________________________________________________________'
+	@if [ "$(service)" = "spark" ]; then \
+		docker build -t dataeng-dibimbing/spark -f ./docker/Dockerfile.spark .; \
+	elif [ "$(service)" = "airflow" ]; then \
+		docker build -t dataeng-dibimbing/airflow -f ./docker/Dockerfile.airflow .; \
+	elif [ "$(service)" = "flask" ]; then \
+		docker build -t dataeng-dibimbing/flask -f ./docker/Dockerfile.flask .; \
+	elif [ "$(service)" = "dashboard" ]; then \
+		docker build -t dataeng-dibimbing/dashboard -f ./docker/Dockerfile.dashboard .; \
+	elif [ "$(service)" = "debezium" ]; then \
+		docker build -t dataeng-dibimbing/debezium -f ./docker/Dockerfile.debezium .; \
+	elif [ "$(service)" = "jupyter" ]; then \
+		docker build -t dataeng-dibimbing/jupyter -f ./docker/Dockerfile.jupyter .; \
+	else \
+		echo "Invalid service name. Available services: spark, airflow, flask, dashboard, debezium, jupyter"; \
+	fi
+	@echo '==========================================================='
+
+# Creating the jupyter instance
+jupyter: jupyter-create
+jupyter-create:
+	@echo '__________________________________________________________'
+	@echo 'Creating Jupyter Instance ...'
+	@echo '__________________________________________________________'
+	@docker compose -f ./docker/docker-compose-jupyter.yml --env-file .env up -d
+	@echo 'Fetching Jupyter token...'
+	@sleep 5 # Wait for the container to start
+	@docker logs dataeng-jupyter 2>&1 | awk -F'token=' '/token=/ {print $2}' | awk -F' ' '{print $1}' | tail -n1
+	@echo '==========================================================='
+
+# Creating the datahub instance
+datahub: datahub-create
+datahub-create:
+	@echo '__________________________________________________________'
+	@echo 'Creating Datahub Instance ...'
+	@echo '__________________________________________________________'
+	@docker compose -f ./docker/docker-compose-datahub.yml --env-file .env up -d
 	@echo '==========================================================='
 
 # Creating the dashboard instance
@@ -254,6 +296,10 @@ clean:
 	@docker ps -aq | xargs docker stop
 	@docker ps -aq | xargs docker rm -f
 	@docker volume ls -q | xargs docker volume rm -f
+
+# Cleaning up the images
+clean-images:
+	@docker images -q | xargs docker rmi -f
 
 # Stopping the containers
 stop:
