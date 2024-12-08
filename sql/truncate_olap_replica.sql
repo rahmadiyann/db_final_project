@@ -1,0 +1,4 @@
+TRUNCATE TABLE public.dataeng-postgres_public_fact_history;
+TRUNCATE TABLE public.dataeng-postgres_public_dim_artist;
+TRUNCATE TABLE public.dataeng-postgres_public_dim_album;
+TRUNCATE TABLE public.dataeng-postgres_public_dim_song;

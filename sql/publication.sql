@@ -1,8 +1,15 @@
 -- Connect to source database and create publication for all tables
 DROP PUBLICATION IF EXISTS dbz_publication;
 
--- Create publication for all existing tables
-CREATE PUBLICATION dbz_publication FOR ALL TABLES;
+-- For PostgreSQL 10 and above
+-- CREATE PUBLICATION dbz_publication FOR ALL TABLES;
+
+-- For specific schema (PostgreSQL 15 and above)
+-- CREATE PUBLICATION dbz_publication FOR TABLES IN SCHEMA public;
+
+-- Or for specific tables
+CREATE PUBLICATION dbz_publication 
+FOR TABLE public.dim_artist, public.dim_album, public.dim_song, public.fact_history;
 
 -- Set default replication identity to FULL for all tables
 DO $$
