@@ -1,0 +1,53 @@
+# Template file for dynamic checks
+checks for fact_history:
+  - row_count = ${FACT_ROW_COUNT}:
+      name: Check fact table has records for current batch
+      filter: played_at > '${PLAYED_AT_START_TIME}' AND played_at <= '${PLAYED_AT_END_TIME}'
+  - missing_count(song_id) = 0:
+      name: No null song IDs
+      filter: played_at >= '${PLAYED_AT_START_TIME}' AND played_at <= '${PLAYED_AT_END_TIME}'
+  - missing_count(album_id) = 0:
+      name: No null album IDs
+      filter: played_at >= '${PLAYED_AT_START_TIME}' AND played_at <= '${PLAYED_AT_END_TIME}'
+  - missing_count(artist_id) = 0:
+      name: No null artist IDs
+      filter: played_at >= '${PLAYED_AT_START_TIME}' AND played_at <= '${PLAYED_AT_END_TIME}'
+  - missing_count(played_at) = 0:
+      name: No null played timestamps
+      filter: played_at >= '${PLAYED_AT_START_TIME}' AND played_at <= '${PLAYED_AT_END_TIME}'
+  - values in (song_id) must exist in dim_song (song_id):
+      name: All songs must exist in dimension
+  - values in (album_id) must exist in dim_album (album_id):
+      name: All albums must exist in dimension
+  - values in (artist_id) must exist in dim_artist (artist_id):
+      name: All artists must exist in dimension
+
+checks for dim_song:
+  - row_count >= ${DIM_SONG_ROW_COUNT}:
+      name: Check song dimension has records
+      filter: added_at >= '${ADDED_AT_START_TIME}'
+  - duplicate_count(song_id) = 0:
+      name: No duplicate song IDs
+  - missing_count(song_id) = 0:
+      name: No null song IDs
+      filter: added_at >= '${ADDED_AT_START_TIME}'
+
+checks for dim_album:
+  - row_count >= ${DIM_ALBUM_ROW_COUNT}:
+      name: Check album dimension has records
+      filter: added_at >= '${ADDED_AT_START_TIME}'
+  - duplicate_count(album_id) = 0:
+      name: No duplicate album IDs
+  - missing_count(album_id) = 0:
+      name: No null album IDs
+      filter: added_at >= '${ADDED_AT_START_TIME}'
+
+checks for dim_artist:
+  - row_count >= ${DIM_ARTIST_ROW_COUNT}:
+      name: Check artist dimension has records
+      filter: added_at >= '${ADDED_AT_START_TIME}'
+  - duplicate_count(artist_id) = 0:
+      name: No duplicate artist IDs
+  - missing_count(artist_id) = 0:
+      name: No null artist IDs
+      filter: added_at >= '${ADDED_AT_START_TIME}'
