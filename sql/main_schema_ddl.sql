@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS analysis.album_completion_analysis (
     id INTEGER PRIMARY KEY DEFAULT nextval('analysis_album_completion_analysis_id_seq'),
     album_title VARCHAR(255) NOT NULL,
     artist_name VARCHAR(255) NOT NULL,
+    album_image_url VARCHAR(255) NOT NULL,
     total_tracks INT NOT NULL,
     unique_tracks_played INT NOT NULL,
     completion_percentage FLOAT NOT NULL,
