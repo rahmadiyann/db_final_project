@@ -22,11 +22,13 @@ services:
     volumes:
       - ../dags:/opt/airflow/dags
       - ../logs:/opt/airflow/logs
-      - ../spark_scripts:/opt/airflow/spark_scripts
-      - ../bash_scripts:/opt/airflow/bash_scripts
+      - ../spark_scripts:/spark_scripts
+      - ../bash_scripts:/bash_scripts
       - ../scripts:/scripts
-      - ../data:/opt/airflow/data
-      - ../jars:/opt/airflow/jars
+      - ../data:/data
+      - ../jars:/jars
+      - ../sql:/sql
+      - ../soda:/soda
   webserver:
     image: dataeng-dibimbing/airflow
     container_name: ${AIRFLOW_WEBSERVER_CONTAINER_NAME}
@@ -52,11 +54,13 @@ services:
     volumes:
       - ../dags:/opt/airflow/dags
       - ../logs:/opt/airflow/logs
-      - ../spark_scripts:/opt/airflow/spark_scripts
-      - ../bash_scripts:/opt/airflow/bash_scripts
+      - ../spark_scripts:/spark_scripts
+      - ../bash_scripts:/bash_scripts
       - ../scripts:/scripts
-      - ../jars:/opt/airflow/jars
-      - ../data:/opt/airflow/data
+      - ../jars:/jars
+      - ../data:/data
+      - ../sql:/sql
+      - ../soda:/soda
     ports:
       - ${AIRFLOW_WEBSERVER_PORT}:8080
 

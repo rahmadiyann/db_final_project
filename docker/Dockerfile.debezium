@@ -5,7 +5,7 @@ USER root
 RUN mkdir -p /kafka/connect/jdbc-connector
 
 # Copy PostgreSQL JDBC driver
-COPY jars/pg_jdbc.jar /kafka/connect/jdbc-connector/
+COPY jars/postgresql-42.7.4.jar /kafka/connect/jdbc-connector/
 
 # Download and install the Debezium JDBC connector
 RUN curl -k -L -o /tmp/debezium-connector-jdbc.tar.gz \

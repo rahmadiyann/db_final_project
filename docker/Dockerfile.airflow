@@ -20,12 +20,16 @@ RUN export JAVA_HOME
 
 USER airflow
 
+RUN pip install --upgrade pip
+
 RUN pip install \
     lxml \
     pyspark==3.3.2 \
     apache-airflow-providers-apache-spark \
     requests \
-    pandas
+    pandas \
+    soda-core \
+    soda-core-postgres
 
 COPY --chown=airflow:root ./dags /opt/airflow/dags
 COPY --chown=airflow:root ./data /opt/airflow/data
