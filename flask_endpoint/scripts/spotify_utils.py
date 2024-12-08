@@ -56,7 +56,7 @@ def load_access_token(session: Session):
         str: Access token
     """
     token = session.query(Token).first()
-    is_expired = token.expires_at - int(time.time()) < 600
+    is_expired = token.expires_at - int(time.time()) < 60
     
     if is_expired:
         sp_oauth = create_spotify_oauth()

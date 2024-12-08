@@ -49,8 +49,9 @@ def callback():
 @app.route('/recent_played')
 def recent_played():
     limit = request.args.get('limit', 20)
-    last_fetch_time = request.args.get('last_fetch_time', None)
-    data = get_recent_played(curr_session, limit, last_fetch_time)
+    last_fetch_time = request.args.get('last_fetch_time', 0)
+    last_fetch_time_plus_one = int(last_fetch_time) + 1
+    data = get_recent_played(curr_session, limit, last_fetch_time_plus_one)
     if not data:
         return jsonify({'error': 'No recent played songs'}), 404
     
@@ -67,8 +68,8 @@ def recent_played():
             'album_id': album_id,
             'artist_id': artist_id
         })
-    datas['last_fetch_time'] = iso_to_unix_ms(song_data[0]['played_at'])
-    datas['last_fetch_time_iso'] = song_data[0]['played_at']
+    datas['cursor'] = last_fetch_time
+    datas['last_played_at'] = iso_to_unix_ms(song_data[0]['played_at'])
     datas['data'] = song_data
     return jsonify(datas), 200
 
