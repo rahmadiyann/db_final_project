@@ -68,6 +68,7 @@ dag = DAG(
 )
 
 def create_spark_task(task_id, stage, destination, table, transform=False):
+    application_name = f"{table}_{stage}2{destination}"
     args = [
         '--stage', stage,
         '--destination', destination,
@@ -79,7 +80,7 @@ def create_spark_task(task_id, stage, destination, table, transform=False):
     return SparkSubmitOperator(
         task_id=f'{task_id}_{table}',
         application='/spark_scripts/run_etl.py',
-        name=f'{table} to {destination} ETL',
+        name=application_name,
         conn_id='spark_main',
         application_args=args,
         jars='/jars/postgresql-42.7.4.jar',

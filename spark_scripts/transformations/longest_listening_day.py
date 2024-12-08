@@ -18,11 +18,11 @@ class BiggestListeningDateETL(SparkETLBase):
         listening_by_date = listening_data.groupBy(
             F.to_date("played_at").alias("date")
         ).agg(
-            F.sum("duration_ms").alias("total_milliseconds"),
+            F.sum("duration_ms").alias("total_miliseconds"),
             F.count("*").alias("songs_played")
         )
         
         # Order by total_milliseconds descending and limit to 1
-        longest_listening_day = listening_by_date.orderBy(F.desc("total_milliseconds")).limit(1)
+        longest_listening_day = listening_by_date.orderBy(F.desc("total_miliseconds")).limit(1)
         longest_listening_day.show()
         return self.add_id_column(longest_listening_day)

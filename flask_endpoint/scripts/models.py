@@ -86,9 +86,9 @@ class FactHistory(Base):
     __table_args__ = {'schema': 'public'}
     
     id = Column(Integer, primary_key=True)
-    song_id = Column(String, ForeignKey('dim_song.song_id'), nullable=False)
-    artist_id = Column(String, ForeignKey('dim_artist.artist_id'), nullable=False)
-    album_id = Column(String, ForeignKey('dim_album.album_id'), nullable=False)
+    song_id = Column(String, ForeignKey('public.dim_song.song_id'), nullable=False)
+    artist_id = Column(String, ForeignKey('public.dim_artist.artist_id'), nullable=False)
+    album_id = Column(String, ForeignKey('public.dim_album.album_id'), nullable=False)
     played_at = Column(DateTime, nullable=False)
 
     song = relationship("DimSong", backref="fact_histories")
