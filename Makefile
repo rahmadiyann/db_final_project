@@ -119,6 +119,7 @@ airflow-create:
 	@echo '==========================================================='
 	@sleep 10
 	@echo 'Airflow websrver is ready to be accessed on http://localhost:${AIRFLOW_WEBSERVER_PORT}'
+	@echo 'You might need to wait for a couple of seconds for the webserver UI to be ready'
 
 # Creating the postgres instance
 postgres: postgres-create postgres-create-table
