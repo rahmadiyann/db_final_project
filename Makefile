@@ -89,6 +89,9 @@ dashboard-create:
 	@echo 'Creating Dashboard Instance ...'
 	@echo '__________________________________________________________'
 	@docker compose -f ./docker/docker-compose-dashboard.yml --env-file .env up -d
+	@echo 'Waiting for Dashboard to be ready...'
+	@sh -c 'until docker logs docker-dashboard-1 2>&1 | grep -q "✓ Ready in"; do sleep 1; done' || (echo "Timeout waiting for Dashboard to start" && exit 1)
+	@echo '✨ Dashboard is ready at http://localhost:3000'
 	@echo '==========================================================='
 
 # Creating the spark cluster instance
@@ -116,10 +119,8 @@ airflow-create:
 	@echo 'Creating Airflow Instance ...'
 	@echo '__________________________________________________________'
 	@docker compose -f ./docker/docker-compose-airflow.yml --env-file .env up -d
+	@echo 'It might take a couple of seconds for the UI to be ready'
 	@echo '==========================================================='
-	@sleep 10
-	@echo 'Airflow websrver is ready to be accessed on http://localhost:${AIRFLOW_WEBSERVER_PORT}'
-	@echo 'You might need to wait for a couple of seconds for the webserver UI to be ready'
 
 # Creating the postgres instance
 postgres: postgres-create postgres-create-table
@@ -292,6 +293,7 @@ debezium-check-connectors:
 list-kafka-topics:
 	@docker exec kafka /kafka/bin/kafka-topics.sh --list --bootstrap-server kafka:9092
 
+clean-all: clean clean-images
 # Cleaning up the containers and volumes
 clean:
 	@docker ps -aq | xargs docker stop
@@ -309,8 +311,5 @@ stop-all:
 # Connecting to postgres container
 postgres-bash:
 	@docker exec -it dataeng-postgres bash
-
-# Running the db final project
-run-db-final-project: postgres spark debezium flask airflow 
 
 # postgres_db=# insert into dim_artist(artist_id, name, external_url, follower_count, image_url, popularity) VALUES('a', 'a', 'a', 1, 'a', 10);
