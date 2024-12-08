@@ -26,19 +26,19 @@ docker-build-arm:
 	@echo '==========================================================='
 
 stop-postgres:
-	@docker stop ${POSTGRES_CONTAINER_NAME} ${POSTGRES_REPLICA_CONTAINER_NAME} ${POSTGRES_ANALYSIS_CONTAINER_NAME}
+	@docker stop ${POSTGRES_CONTAINER_NAME} ${POSTGRES_REPLICA_CONTAINER_NAME} ${POSTGRES_ANALYSIS_CONTAINER_NAME} || true
 stop-spark:
-	@docker stop ${SPARK_CONTAINER_NAME}
+	@docker stop ${SPARK_CONTAINER_NAME} || true
 stop-airflow:
-	@docker stop ${AIRFLOW_CONTAINER_NAME}
+	@docker stop ${AIRFLOW_CONTAINER_NAME} || true
 stop-flask:
-	@docker stop ${FLASK_CONTAINER_NAME}
+	@docker stop ${FLASK_CONTAINER_NAME} || true
 stop-dashboard:
-	@docker stop ${DASHBOARD_CONTAINER_NAME}
+	@docker stop ${DASHBOARD_CONTAINER_NAME} || true
 stop-debezium:
-	@docker stop ${DEBEZIUM_CONTAINER_NAME}
+	@docker stop ${DEBEZIUM_CONTAINER_NAME} || true
 stop-jupyter:
-	@docker stop ${JUPYTER_CONTAINER_NAME}
+	@docker stop ${JUPYTER_CONTAINER_NAME} || true
 
 docker-build:
 	@echo '__________________________________________________________'
