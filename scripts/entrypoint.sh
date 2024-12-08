@@ -9,18 +9,12 @@ airflow connections add 'source_postgres' \
 --conn-host $POSTGRES_HOST_SOURCE \
 --conn-port $POSTGRES_PORT_SOURCE \
 --conn-schema $POSTGRES_SOURCE_DB
+
 airflow connections add 'main_postgres' \
 --conn-type 'postgres' \
 --conn-login $POSTGRES_USER \
 --conn-password $POSTGRES_PASSWORD \
 --conn-host $POSTGRES_CONTAINER_NAME \
---conn-port $POSTGRES_PORT \
---conn-schema $POSTGRES_DB
-airflow connections add 'analysis_postgres' \
---conn-type 'postgres' \
---conn-login $POSTGRES_USER \
---conn-password $POSTGRES_PASSWORD \
---conn-host $POSTGRES_ANALYSIS_CONTAINER_NAME \
 --conn-port $POSTGRES_PORT \
 --conn-schema $POSTGRES_DB
 
