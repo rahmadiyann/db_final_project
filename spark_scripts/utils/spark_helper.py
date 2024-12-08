@@ -42,7 +42,7 @@ def load_table(spark, db, table_name):
     df = spark.read \
         .format("jdbc") \
         .option("url", props['url']) \
-        .option("dbtable", props['table']) \
+        .option("dbtable", props['dbtable']) \
         .option("user", props['user']) \
         .option("password", props['password']) \
         .option("driver", props['driver']) \

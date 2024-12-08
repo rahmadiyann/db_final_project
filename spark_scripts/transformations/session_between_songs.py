@@ -46,4 +46,5 @@ class SessionBetweenSongsETL(SparkETLBase):
         )
         
         session_between_songs.show()
+        session_between_songs = self.add_id_column(session_between_songs)
         return session_between_songs

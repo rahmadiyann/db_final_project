@@ -40,5 +40,6 @@ class TopSongDetail(SparkETLBase):
         # Order by play_count descending and limit to 1
         top_song = top_played_songs.orderBy(F.desc("play_count")).limit(1)
         
+        top_song = self.add_id_column(top_song)
         top_song.show()
         return top_song

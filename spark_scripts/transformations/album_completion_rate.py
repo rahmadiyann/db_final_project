@@ -17,7 +17,8 @@ class AlbumCompletionETL(SparkETLBase):
             dim_artist, "artist_id"
         ).groupBy(
             dim_album.title.alias("album_title"), 
-            dim_artist.name.alias("artist_name"), 
+            dim_artist.name.alias("artist_name"),
+            dim_album.image_url.alias("album_image_url"),
             "total_tracks"
         ).agg(
             F.countDistinct("song_id").alias("unique_tracks_played")
@@ -34,7 +35,8 @@ class AlbumCompletionETL(SparkETLBase):
             F.col("total_tracks") > 5
         ).orderBy(
             F.desc("completion_percentage"), F.desc("total_tracks")
-        ).limit(10) 
+        ).limit(10)
         
+        album_completion_rate = self.add_id_column(album_completion_rate)
         album_completion_rate.show()
         return album_completion_rate

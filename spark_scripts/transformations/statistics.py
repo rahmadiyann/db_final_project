@@ -26,4 +26,5 @@ class StatisticsETL(SparkETLBase):
         statistics = total_miliseconds.crossJoin(total_songs_played)
         
         statistics.show()
+        statistics = self.add_id_column(statistics)
         return statistics

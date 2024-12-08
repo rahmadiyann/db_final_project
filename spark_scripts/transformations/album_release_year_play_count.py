@@ -17,5 +17,6 @@ class AlbumReleaseYearETL(SparkETLBase):
             F.count("*").alias("play_count")
         ).orderBy(F.desc("release_year")) 
         
+        album_release_year_play_count = self.add_id_column(album_release_year_play_count)
         album_release_year_play_count.show()
         return album_release_year_play_count

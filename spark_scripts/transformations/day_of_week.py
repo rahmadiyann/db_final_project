@@ -32,4 +32,5 @@ class DayOfWeekETL(SparkETLBase):
         ).orderBy("day_number")
 
         daily_stats.show()
-        return daily_stats.drop("day_number") 
+        daily_stats = self.add_id_column(daily_stats.drop("day_number"))
+        return daily_stats 

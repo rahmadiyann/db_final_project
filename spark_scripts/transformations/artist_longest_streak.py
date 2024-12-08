@@ -57,5 +57,5 @@ class ArtistLongestStreak(SparkETLBase):
         # Get the longest streak and drop streak_group column
         longest_streak = streaks.orderBy(F.desc("streak_days")).limit(1).drop("streak_group")
         
-        longest_streak.show()
+        longest_streak = self.add_id_column(longest_streak)
         return longest_streak

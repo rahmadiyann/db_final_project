@@ -25,4 +25,4 @@ class BiggestListeningDateETL(SparkETLBase):
         # Order by total_milliseconds descending and limit to 1
         longest_listening_day = listening_by_date.orderBy(F.desc("total_milliseconds")).limit(1)
         longest_listening_day.show()
-        return longest_listening_day
+        return self.add_id_column(longest_listening_day)

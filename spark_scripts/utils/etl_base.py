@@ -57,9 +57,11 @@ class SparkETLBase:
         return df
 
     def add_id_column(self, df, id_column_name="id"):
-        """Add an auto-incrementing ID column to the DataFrame"""
+        """Add an auto-incrementing ID column to the DataFrame as a primary key"""
         window = Window.orderBy(monotonically_increasing_id())
-        return df.withColumn(id_column_name, row_number().over(window))
+        df_with_pk = df.withColumn(id_column_name, row_number().over(window))
+        df_with_pk = df_with_pk.dropDuplicates([id_column_name]).na.drop(subset=[id_column_name])
+        return df_with_pk
 
     def run(self):
         try:

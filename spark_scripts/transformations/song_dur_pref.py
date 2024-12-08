@@ -25,4 +25,5 @@ class SongDurPrefETL(SparkETLBase):
         ).orderBy(F.desc("play_count"))
         
         song_dur_pref.show()
+        song_dur_pref = self.add_id_column(song_dur_pref)
         return song_dur_pref
