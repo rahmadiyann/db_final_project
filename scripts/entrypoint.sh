@@ -1,4 +1,5 @@
 #!/bin/bash
+
 airflow db init
 echo "AUTH_ROLE_PUBLIC = 'Admin'" >> webserver_config.py
 airflow connections add 'source_postgres' \
@@ -20,14 +21,14 @@ airflow connections add 'analysis_postgres' \
 --conn-login $POSTGRES_USER \
 --conn-password $POSTGRES_PASSWORD \
 --conn-host $POSTGRES_ANALYSIS_CONTAINER_NAME \
---conn-port $POSTGRES_ANALYSIS_PORT \
+--conn-port $POSTGRES_PORT \
 --conn-schema $POSTGRES_DB
 
 airflow variables set 'email_config' \
 -v '{"EMAIL_SENDER": "'$EMAIL_SENDER'", "EMAIL_PASSWORD": '$EMAIL_PASSWORD'}'
 
-airflow variables set 'proj_dir' \
--v '/opt/airflow'
+airflow variables set 'last_fetch_time' \
+-v '0'
 
 airflow variables set 'email_recipient' \
 -v '{{"EMAIL_RECIPIENT": "'$EMAIL_RECIPIENT'"}}'
