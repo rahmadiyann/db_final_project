@@ -1,70 +1,76 @@
 export interface ListeningStats {
-  // Basic metrics
   totalMinutesListened: number;
   totalSongsPlayed: number;
+  albumCompletions: AlbumCompletion[];
+  durationPreference: DurationPreference[];
+  explicitPreference: ExplicitPreference[];
+  dayDistribution: DayDistribution[];
+  hourDistribution: HourDistribution[];
+  artistLongestStreak: ArtistStreak;
+  longestListeningDay: LongestDay;
+  popularityDistribution: PopularityDistribution[];
+  releaseYearDistribution: ReleaseYearDistribution[];
+  sessionTypes: SessionType[];
+}
 
-  // Album completion
-  albumCompletions: {
-    albumTitle: string;
-    artistName: string;
-    completionPercentage: number;
-    listeningStatus: string;
-  }[];
+export interface AlbumCompletion {
+  albumTitle: string;
+  artistName: string;
+  albumImageUrl: string;
+  completionPercentage: number;
+  totalTracks: number;
+  uniqueTracksPlayed: number;
+}
 
-  // Listening preferences
-  durationPreference: {
-    category: string;
-    percentage: number;
-  }[];
+export interface DurationPreference {
+  category: string;
+  percentage: number;
+}
 
-  explicitPreference: {
-    explicit: boolean;
-    percentage: number;
-  }[];
+export interface ExplicitPreference {
+  explicit: boolean;
+  percentage: number;
+}
 
-  // Time-based stats
-  dayDistribution: {
-    dayOfWeek: string;
-    playCount: number;
-    songVarietyPercentage: number;
-    artistVarietyPercentage: number;
-  }[];
+export interface DayDistribution {
+  dayOfWeek: string;
+  playCount: number;
+  songVarietyPercentage: number;
+  artistVarietyPercentage: number;
+}
 
-  hourDistribution: {
-    hourOfDay: number;
-    percentage: number;
-  }[];
+export interface HourDistribution {
+  hourOfDay: number;
+  percentage: number;
+}
 
-  // Streaks and records
-  artistLongestStreak: {
-    artistName: string;
-    streak: number;
-    dateFrom: string;
-    dateUntil: string;
-    totalMinutes: number;
-  };
+export interface ArtistStreak {
+  artistId: string;
+  artistName: string;
+  artist_image_url: string;
+  streak: number;
+  dateFrom: Date;
+  dateUntil: Date;
+  totalMinutes?: number;
+}
 
-  longestListeningDay: {
-    date: string;
-    playCount: number;
-  };
+export interface LongestDay {
+  date: string;
+  playCount: number;
+}
 
-  // Song popularity
-  popularityDistribution: {
-    popularityRange: string;
-    percentage: number;
-  }[];
+export interface PopularityDistribution {
+  popularityRange: string;
+  percentage: number;
+}
 
-  // Release year distribution
-  releaseYearDistribution: {
-    year: number;
-    playCount: number;
-  }[];
+export interface ReleaseYearDistribution {
+  year: number;
+  playCount: number;
+}
 
-  // Section 8: Weekly Listening Patterns
-  sessionTypes: {
-    sessionType: string;
-    count: number;
-    percentage: number;
-  }[];
+export interface SessionType {
+  sessionType: string;
+  count: number;
+  percentage: number;
 }

@@ -24,11 +24,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans bg-black text-white`}
-      >
-        <main className="min-h-screen">{children}</main>
+    <html
+      lang="en"
+      className={`scroll-smooth ${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head />
+      <body className="bg-black min-h-screen font-sans selection:bg-white/20 overflow-x-hidden">
+        <main className="min-h-screen w-full">
+          <div className="mx-auto max-w-7xl">{children}</div>
+        </main>
       </body>
     </html>
   );

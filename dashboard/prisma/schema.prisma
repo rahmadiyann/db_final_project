@@ -13,6 +13,7 @@ model album_completion_analysis {
   id                    Int    @id @default(autoincrement())
   album_title           String @db.VarChar(255)
   artist_name           String @db.VarChar(255)
+  album_image_url       String @db.VarChar(255)
   total_tracks          Int
   unique_tracks_played  Int
   completion_percentage Float
@@ -102,7 +103,7 @@ model artist_longest_streak {
 model longest_listening_day {
   id                Int      @id @default(autoincrement())
   date              DateTime @db.Date
-  total_miliseconds BigInt
+  total_milliseconds BigInt
   songs_played      Int
 
   @@schema("metrics")
