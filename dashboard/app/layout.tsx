@@ -14,21 +14,21 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Spotify Analytics Dashboard",
-  description: "Your personal Spotify listening statistics",
+  title: "Your Music Journey | Listening Statistics",
+  description: "Discover your unique music listening patterns and preferences",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans bg-black text-white`}
       >
-        {children}
+        <main className="min-h-screen">{children}</main>
       </body>
     </html>
   );

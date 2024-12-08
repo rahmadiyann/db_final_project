@@ -1,10 +1,133 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("MAIN_DATABASE_URL")
+  schemas  = ["analysis", "metrics", "public"]
+}
+
+model album_completion_analysis {
+  id                    Int    @id @default(autoincrement())
+  album_title           String @db.VarChar(255)
+  artist_name           String @db.VarChar(255)
+  total_tracks          Int
+  unique_tracks_played  Int
+  completion_percentage Float
+  listening_status      String @db.VarChar(255)
+
+  @@schema("analysis")
+}
+
+model album_release_year_play_count {
+  id           Int @id @default(autoincrement())
+  release_year Int
+  play_count   Int
+
+  @@schema("analysis")
+}
+
+model day_of_week_listening_distribution {
+  id                        Int    @id @default(autoincrement())
+  day_of_week               String @db.VarChar(255)
+  play_count                Int
+  unique_songs              Int
+  unique_artists            Int
+  song_variety_percentage   Float
+  artist_variety_percentage Float
+
+  @@schema("analysis")
+}
+
+model explicit_preference {
+  id         Int     @id @default(autoincrement())
+  explicit   Boolean
+  play_count Int
+  percentage Float
+
+  @@schema("analysis")
+}
+
+model hour_of_day_listening_distribution {
+  id          Int   @id @default(autoincrement())
+  hour_of_day Int
+  play_count  Int
+  percentage  Float
+
+  @@schema("analysis")
+}
+
+model session_between_songs {
+  id           Int    @id @default(autoincrement())
+  session_type String @db.VarChar(255)
+  count        Int
+  percentage   Float
+
+  @@schema("analysis")
+}
+
+model song_duration_preference {
+  id                Int    @id @default(autoincrement())
+  duration_category String @db.VarChar(255)
+  play_count        Int
+  percentage        Float
+
+  @@schema("analysis")
+}
+
+model song_popularity_distribution {
+  id                 Int    @id @default(autoincrement())
+  popularity_bracket Int
+  play_count         Int
+  popularity_range   String @db.VarChar(10)
+  percentage         Float
+
+  @@schema("analysis")
+}
+
+model artist_longest_streak {
+  id               Int      @id @default(autoincrement())
+  artist_id        String   @db.VarChar(255)
+  artist_name      String   @db.VarChar(255)
+  artist_image_url String   @db.VarChar(255)
+  streak_days      Int
+  date_from        DateTime @db.Date
+  date_until       DateTime @db.Date
+
+  @@schema("metrics")
+}
+
+model longest_listening_day {
+  id                Int      @id @default(autoincrement())
+  date              DateTime @db.Date
+  total_miliseconds BigInt
+  songs_played      Int
+
+  @@schema("metrics")
+}
+
+model statistics {
+  id                 Int    @id @default(autoincrement())
+  total_miliseconds  BigInt
+  total_songs_played Int
+
+  @@schema("metrics")
+}
+
+model top_played_song {
+  id               Int      @id @default(autoincrement())
+  song_id          String   @db.VarChar(255)
+  song_title       String   @db.VarChar(255)
+  artist_id        String   @db.VarChar(255)
+  artist_name      String   @db.VarChar(255)
+  artist_image_url String   @db.VarChar(255)
+  play_count       Int
+  first_played_at  DateTime @db.Date
+  last_played_at   DateTime @db.Date
+
+  @@schema("metrics")
 }
 
 model dim_album {
@@ -16,7 +139,10 @@ model dim_album {
   image_url    String?
   label        String
   popularity   Int
+  added_at     DateTime       @default(now())
   fact_history fact_history[]
+
+  @@schema("public")
 }
 
 model dim_artist {
@@ -26,7 +152,10 @@ model dim_artist {
   follower_count Int
   image_url      String?
   popularity     Int
+  added_at       DateTime       @default(now())
   fact_history   fact_history[]
+
+  @@schema("public")
 }
 
 model dim_song {
@@ -38,7 +167,10 @@ model dim_song {
   external_url String
   preview_url  String?
   popularity   Int
+  added_at     DateTime       @default(now())
   fact_history fact_history[]
+
+  @@schema("public")
 }
 
 model fact_history {
@@ -47,7 +179,10 @@ model fact_history {
   artist_id  String
   album_id   String
   played_at  DateTime
+  added_at   DateTime   @default(now())
   dim_album  dim_album  @relation(fields: [album_id], references: [album_id])
   dim_artist dim_artist @relation(fields: [artist_id], references: [artist_id])
   dim_song   dim_song   @relation(fields: [song_id], references: [song_id])
+
+  @@schema("public")
 }
