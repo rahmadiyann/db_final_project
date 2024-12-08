@@ -25,28 +25,18 @@ docker-build-arm:
 	@docker build -t dataeng-dibimbing/debezium -f ./docker/Dockerfile.debezium .
 	@echo '==========================================================='
 
-stop:
-	@echo '__________________________________________________________'
-	@echo 'Stopping Single Docker Container ...'
-	@echo '__________________________________________________________'
-	@if [ "$(service)" = "postgres" ]; then \
-		docker stop ${POSTGRES_CONTAINER_NAME} ${POSTGRES_REPLICA_CONTAINER_NAME} ${POSTGRES_ANALYSIS_CONTAINER_NAME}; \
-	elif [ "$(service)" = "spark" ]; then \
-		docker stop ${SPARK_CONTAINER_NAME}; \
-	elif [ "$(service)" = "airflow" ]; then \
-		docker stop ${AIRFLOW_CONTAINER_NAME}; \
-	elif [ "$(service)" = "flask" ]; then \
-		docker stop ${FLASK_CONTAINER_NAME}; \
-	elif [ "$(service)" = "dashboard" ]; then \
-		docker stop ${DASHBOARD_CONTAINER_NAME}; \
-	elif [ "$(service)" = "debezium" ]; then \
-		docker stop ${DEBEZIUM_CONTAINER_NAME}; \
-	elif [ "$(service)" = "jupyter" ]; then \
-		docker stop ${JUPYTER_CONTAINER_NAME}; \
-	else \
-		echo "Invalid service name. Available services: postgres, spark, airflow, flask, dashboard, debezium, jupyter"; \
-	fi
-	@echo '==========================================================='
+stop-postgres:
+	@docker stop ${POSTGRES_CONTAINER_NAME} ${POSTGRES_REPLICA_CONTAINER_NAME} ${POSTGRES_ANALYSIS_CONTAINER_NAME}
+stop-spark:
+	@docker stop ${SPARK_CONTAINER_NAME}
+stop-airflow:
+	@docker stop ${AIRFLOW_CONTAINER_NAME}
+stop-flask:
+	@docker stop ${FLASK_CONTAINER_NAME}
+stop-dashboard:
+	@docker stop ${DASHBOARD_CONTAINER_NAME}
+stop-debezium:
+	@docker stop ${DEBEZIUM_CONTAINER_NAME}
 
 docker-build:
 	@echo '__________________________________________________________'
@@ -140,13 +130,6 @@ postgres-create:
 		echo 'Main Postgres password	: ${POSTGRES_PASSWORD}' &&\
 		echo 'Main Postgres Db		: ${POSTGRES_DB}'
 	@echo '__________________________________________________________'
-	@echo 'Analysis Postgres container created at port ${POSTGRES_ANALYSIS_PORT}...'
-	@echo '__________________________________________________________'
-	@echo 'Analysis Postgres Docker Host	: ${POSTGRES_ANALYSIS_CONTAINER_NAME}' &&\
-		echo 'Analysis Postgres Account	: ${POSTGRES_ANALYSIS_USER}' &&\
-		echo 'Analysis Postgres password	: ${POSTGRES_ANALYSIS_PASSWORD}' &&\
-		echo 'Analysis Postgres Db		: ${POSTGRES_ANALYSIS_DB}'
-	@echo '__________________________________________________________'
 	@echo 'Replica Postgres container created at port ${POSTGRES_REPLICA_PORT}...'
 	@echo '__________________________________________________________'
 	@echo 'Replica Postgres Docker Host	: ${POSTGRES_REPLICA_CONTAINER_NAME}' &&\
@@ -178,35 +161,34 @@ postgres-create-table:
 	@docker exec -it ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -f sql/replica_schema_ddl.sql
 	@echo '==========================================================='
 
+
 # Inserting the data into the main postgres
 postgres-full-insert: postgres-insert-album postgres-insert-song postgres-insert-artist postgres-insert-history
 postgres-insert-album:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_album.sql
-	@sleep 5
 
 postgres-insert-song:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_song.sql
-	@sleep 5
 
 postgres-insert-artist:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_artist.sql
-	@sleep 5
 
 postgres-insert-history:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_history.sql
+
+postgres-truncate-datamart:
+	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/truncate_analysis.sql
 
 # Connecting to postgres containers
 connect-main-postgres:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
 connect-replica-postgres:
 	@docker exec -it ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB}
-connect-analysis-postgres:
-	@docker exec -it ${POSTGRES_ANALYSIS_CONTAINER_NAME} psql -U ${POSTGRES_ANALYSIS_USER} -d ${POSTGRES_ANALYSIS_DB}
 connect-airflow-postgres:
 	@docker exec -it ${POSTGRES_AIRFLOW_CONTAINER_NAME} psql -U ${POSTGRES_AIRFLOW_USER} -d ${POSTGRES_AIRFLOW_DB}
 
 # Checking the count comparison between main and replica postgres
-postgres-check-count:
+postgres-count-check:
 	@printf "Table\t\tMain DB\t\tReplica DB\n"
 	@printf "%s\n" "----------------------------------------"
 	@printf "dim_album\t"
@@ -231,6 +213,20 @@ postgres-truncate-main:
 	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "dim_artist" CASCADE;'
 	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "dim_song" CASCADE;'
 	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "fact_history";'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.album_completion_analysis" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.song_duration_preference" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.explicit_preference" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.day_of_week_listening_distribution" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.session_between_songs" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.song_popularity_distribution" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.hour_of_day_listening_distribution" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.album_release_year_play_count" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.longest_streak_of_top_listened_artist" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.total_minutes_listened" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.total_minutes_listened_by_day_of_week" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.total_songs_played" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.top_played_songs" CASCADE;'
+	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.biggest_listening_day" CASCADE;'
 
 postgres-truncate-replica:
 	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_dim_album" CASCADE;'
@@ -254,6 +250,7 @@ debezium-create-topic:
 	@docker exec kafka /kafka/bin/kafka-topics.sh --create --if-not-exists --bootstrap-server localhost:9092 --topic dataeng-postgres.public.dim_artist --partitions 1 --replication-factor 1
 	@docker exec kafka /kafka/bin/kafka-topics.sh --create --if-not-exists --bootstrap-server localhost:9092 --topic dataeng-postgres.public.dim_song --partitions 1 --replication-factor 1
 	@docker exec kafka /kafka/bin/kafka-topics.sh --create --if-not-exists --bootstrap-server localhost:9092 --topic dataeng-postgres.public.fact_history --partitions 1 --replication-factor 1
+	@docker exec kafka /kafka/bin/kafka-topics.sh --create --if-not-exists --bootstrap-server localhost:9092 --topic dataeng-postgres.transaction --partitions 1 --replication-factor 1
 	@echo '==========================================================='
 
 # Registering the connectors
@@ -333,6 +330,6 @@ postgres-bash:
 	@docker exec -it dataeng-postgres bash
 
 # Running the db final project
-run-db-final-project: postgres-create debezium-create debezium-register-all flask-create airflow-create spark-create
+run-db-final-project: postgres spark debezium flask airflow 
 
 # postgres_db=# insert into dim_artist(artist_id, name, external_url, follower_count, image_url, popularity) VALUES('a', 'a', 'a', 1, 'a', 10);
