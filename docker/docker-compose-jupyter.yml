@@ -15,6 +15,7 @@ services:
       - ../jars:/opt/jars
       - ../notebooks:/home/jovyan
       - ../spark_scripts:/home/jovyan/spark_scripts
+      - ../data:/home/jovyan/data
 
 networks:
   default:
