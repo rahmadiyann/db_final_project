@@ -11,6 +11,6 @@ fi
 for TABLE_NAME in "$@"
 do
     echo "Dumping table ${TABLE_NAME}"
-    PGPASSWORD=${POSTGRES_SOURCE_PASSWORD} pg_dump --data-only --rows-per-insert=100 -h ${POSTGRES_HOST_SOURCE} -U ${POSTGRES_SOURCE_USER} -d ${POSTGRES_SOURCE_DB} -t ${TABLE_NAME} > /opt/airflow/data/${TABLE_NAME}.sql
+    PGPASSWORD=${POSTGRES_SOURCE_PASSWORD} pg_dump --data-only --rows-per-insert=100 -h ${POSTGRES_HOST_SOURCE} -U ${POSTGRES_SOURCE_USER} -d ${POSTGRES_SOURCE_DB} -t ${TABLE_NAME} > /sql/migration/${TABLE_NAME}.sql
 done
 echo "Dump completed"

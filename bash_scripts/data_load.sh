@@ -12,7 +12,7 @@ fi
 for TABLE_NAME in "$@"
 do
     echo "Loading table ${TABLE_NAME}"
-    PGPASSWORD=${POSTGRES_PASSWORD} psql -h ${POSTGRES_CONTAINER_NAME} -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f /opt/airflow/data/${TABLE_NAME}.sql
+    PGPASSWORD=${POSTGRES_PASSWORD} psql -h ${POSTGRES_CONTAINER_NAME} -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f /sql/migration/${TABLE_NAME}.sql
 
     # Check if the last command was successful
     if [ $? -ne 0 ]; then
