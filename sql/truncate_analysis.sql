@@ -1,0 +1,14 @@
+TRUNCATE TABLE analysis.album_completion_rate;
+TRUNCATE TABLE analysis.album_release_year_play_count;
+TRUNCATE TABLE analysis.day_of_week;
+TRUNCATE TABLE analysis.explicit_preference;
+TRUNCATE TABLE analysis.hour_of_day_play_count;
+TRUNCATE TABLE analysis.popularity_pref;
+TRUNCATE TABLE analysis.session_between_songs;
+TRUNCATE TABLE analysis.song_dur_pref;
+TRUNCATE TABLE metrics.longest_streak_of_top_listened_artist;
+TRUNCATE TABLE metrics.total_minutes_listened;
+TRUNCATE TABLE metrics.total_minutes_listened_by_day_of_week;
+TRUNCATE TABLE metrics.total_songs_played;
+TRUNCATE TABLE metrics.top_played_songs;
+TRUNCATE TABLE metrics.biggest_listening_day;
