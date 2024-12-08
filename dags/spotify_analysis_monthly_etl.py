@@ -7,6 +7,7 @@ from airflow.utils.task_group import TaskGroup
 from datetime import datetime, timedelta
 import pendulum
 import logging
+from sensors.sql_data_sensor import LastMonthDataSensor
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +91,7 @@ def create_spark_task(task_id, stage, destination, table, transform=False):
         dag=dag,
     )
     
-def create_sql_task(task_id, sql, conn_id='analysis_postgres'):
+def create_sql_task(task_id, sql, conn_id='main_postgres'):
     return SQLCheckOperator(
         task_id=task_id,
         sql=sql,
@@ -98,17 +99,26 @@ def create_sql_task(task_id, sql, conn_id='analysis_postgres'):
         dag=dag,
     )
     
-def clean_up_data(table: str, source: str):
-    logger.info(f'Cleaning up {table} in {source}')
+def clean_up_data(source: str):
+    logger.info(f'Cleaning up {source}')
     return BashOperator(
-        task_id=f'clean_up_{table}_{source}',
-        bash_command=f'rm -rf /data/{source}/* ',
+        task_id=f'clean_up_{source}',
+        bash_command=f'rm -rf /data/spotify_analysis/{source}/* ',
         dag=dag,
     )
     
 # Task groups
 start = EmptyOperator(task_id='start', dag=dag)
 end = EmptyOperator(task_id='end', dag=dag)
+
+# Add the sensor as the first task
+check_last_month_data = LastMonthDataSensor(
+    task_id='data_sensor',
+    poke_interval=150,  # Check every 5 minutes
+    timeout=60 * 60 * 2,  # Timeout after 2 hours
+    mode='reschedule',
+    soft_fail=False,  # Fail the DAG if data is not found
+)
 
 # Source tables and tasks remain the same
 source_tables = [
@@ -120,14 +130,14 @@ source_tables = [
 
 # Analysis tables remain the same
 analysis_tables = [
-    'album_completion_rate',
+    'album_completion_analysis',
     'album_release_year_play_count',
-    'day_of_week',
+    'day_of_week_listening_distribution',
     'explicit_preference',
-    'hour_of_day_play_count',
-    'popularity_pref',
+    'hour_of_day_listening_distribution',
+    'song_popularity_distribution',
     'session_between_songs',
-    'song_dur_pref',
+    'song_duration_preference',
 ]
 
 metrics_table = [
@@ -140,7 +150,7 @@ metrics_table = [
 
 with TaskGroup("source_to_landing", dag=dag) as source_to_landing_group:
     source_to_landing_tasks = [
-        create_spark_task('', 'source', 'landing', table)
+        create_spark_task('', 'source', 'landing', f'public.{table}')
         for table in source_tables
     ]
 
@@ -159,7 +169,7 @@ with TaskGroup("landing_to_staging", dag=dag) as landing_to_staging_group:
     
     truncate_datamart_task = BashOperator(
         task_id='truncate_datamart',
-        bash_command='sh /bash_scripts/truncate_table.sh',
+        bash_command='sh /bash_scripts/truncate_table.sh ',
         dag=dag,
     )
     
@@ -204,22 +214,12 @@ with TaskGroup("staging2hist", dag=dag) as staging_to_hist_group:
             for table in metrics_table
         ]
 with TaskGroup("cleanup", dag=dag) as cleanup_group:
-    with TaskGroup('landing_cleanup', dag=dag) as cleanup_landing:
-        landing_cleanup_tasks = [clean_up_data(table, 'landing') for table in source_tables]
-        
-    with TaskGroup('stg_cleanup', dag=dag) as cleanup_stg:
-        with TaskGroup('analysis',dag=dag) as cleanup_stg_analysis:
-            staging_cleanup_analysis_tasks = [clean_up_data(table, 'staging') for table in analysis_tables]
-        with TaskGroup('metrics',dag=dag) as cleanup_stg_metrics:
-            staging_cleanup_metrics_tasks = [clean_up_data(table, 'staging') for table in metrics_table]
+    cleanup_tasks = [clean_up_data(source) for source in ['landing', 'staging']]
         
     email_end = EmptyOperator(task_id='email_end', dag=dag)
     
-    # Combine all cleanup tasks into a single list
-    all_cleanup_tasks = landing_cleanup_tasks + staging_cleanup_analysis_tasks + staging_cleanup_metrics_tasks
-    
-    for task in all_cleanup_tasks:
+    for task in cleanup_tasks:
         task >> email_end
 
 # Set up dependencies
-start >> source_to_landing_group >> landing_to_staging_group >> staging_to_datamart_group >> count_check_group >> staging_to_hist_group >> cleanup_group >> end
+start >> check_last_month_data >>source_to_landing_group >> landing_to_staging_group >> staging_to_datamart_group >> count_check_group >> staging_to_hist_group >> cleanup_group >> end
