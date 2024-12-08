@@ -3,7 +3,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dashboard
+    environment:
+      - MAIN_DATABASE_URL=${DATAENG_POSTGRES_URI}
     ports:
       - 3000:3000
     volumes:
       - ../dashboard:/app
+    command: ["npm", "start"]
