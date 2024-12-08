@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, BigInteger, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, BigInteger, Boolean, DateTime, ForeignKey, Text, Date, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -9,6 +9,7 @@ class Token(Base):
     Token model.
     """
     __tablename__ = 'tokens'
+    __table_args__ = {'schema': 'public'}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     access_token = Column(String(512), nullable=True)
@@ -24,7 +25,8 @@ class DimSong(Base):
     Song model.
     """
     __tablename__ = 'dim_song'
-
+    __table_args__ = {'schema': 'public'}
+    
     song_id = Column(String, primary_key=True)
     title = Column(String)
     disc_number = Column(Integer)
@@ -43,7 +45,8 @@ class DimAlbum(Base):
     Album model.
     """
     __tablename__ = 'dim_album'
-
+    __table_args__ = {'schema': 'public'}
+    
     album_id = Column(String, primary_key=True)
     title = Column(String)
     total_tracks = Column(Integer)
@@ -62,7 +65,8 @@ class DimArtist(Base):
     Artist model.
     """
     __tablename__ = 'dim_artist'
-
+    __table_args__ = {'schema': 'public'}
+    
     artist_id = Column(String, primary_key=True)
     name = Column(String)
     external_url = Column(String)
@@ -79,7 +83,8 @@ class FactHistory(Base):
     Fact history model.
     """
     __tablename__ = 'fact_history'
-
+    __table_args__ = {'schema': 'public'}
+    
     id = Column(Integer, primary_key=True)
     song_id = Column(String, ForeignKey('dim_song.song_id'), nullable=False)
     artist_id = Column(String, ForeignKey('dim_artist.artist_id'), nullable=False)
@@ -89,3 +94,124 @@ class FactHistory(Base):
     song = relationship("DimSong", backref="fact_histories")
     artist = relationship("DimArtist", backref="fact_histories")
     album = relationship("DimAlbum", backref="fact_histories")
+    
+
+class ArtistLongestStreak(Base):
+    __tablename__ = 'artist_longest_streak'
+    __table_args__ = {'schema': 'metrics'}
+
+    artist_id = Column(Text, primary_key=True)
+    artist_name = Column(Text, nullable=False)
+    artist_image_url = Column(Text)
+    streak_days = Column(BigInteger, nullable=False)
+    date_from = Column(Date, nullable=False)
+    date_until = Column(Date, nullable=False)
+
+
+class LongestListeningDay(Base):
+    __tablename__ = 'longest_listening_day'
+    __table_args__ = {'schema': 'metrics'}
+
+    date = Column(Date, primary_key=True)
+    total_milliseconds = Column(BigInteger, nullable=False)
+    songs_played = Column(BigInteger, nullable=False)
+
+
+class Statistics(Base):
+    __tablename__ = 'statistics'
+    __table_args__ = {'schema': 'metrics'}
+
+    total_miliseconds = Column(BigInteger, primary_key=True)
+    total_songs_played = Column(BigInteger, nullable=False)
+
+
+class TopPlayedSong(Base):
+    __tablename__ = 'top_played_song'
+    __table_args__ = {'schema': 'metrics'}
+
+    song_id = Column(Text, primary_key=True)
+    song_title = Column(Text, nullable=False)
+    artist_id = Column(Text, nullable=False)
+    artist_name = Column(Text, nullable=False)
+    artist_image_url = Column(Text)
+    play_count = Column(BigInteger, nullable=False)
+    first_played_at = Column(DateTime, nullable=False)
+    last_played_at = Column(DateTime, nullable=False)
+
+
+class AlbumCompletionAnalysis(Base):
+    __tablename__ = 'album_completion_analysis'
+    __table_args__ = {'schema': 'analysis'}
+
+    album_title = Column(Text, primary_key=True)
+    artist_name = Column(Text, nullable=False)
+    total_tracks = Column(Integer, nullable=False)
+    unique_tracks_played = Column(BigInteger, nullable=False)
+    completion_percentage = Column(Float(53), nullable=False)
+    listening_status = Column(Text, nullable=False)
+
+
+class AlbumReleaseYearPlayCount(Base):
+    __tablename__ = 'album_release_year_play_count'
+    __table_args__ = {'schema': 'analysis'}
+
+    release_year = Column(Integer, primary_key=True)
+    play_count = Column(BigInteger, nullable=False)
+
+
+class DayOfWeekListeningDistribution(Base):
+    __tablename__ = 'day_of_week_listening_distribution'
+    __table_args__ = {'schema': 'analysis'}
+
+    day_of_week = Column(Text, primary_key=True)
+    play_count = Column(BigInteger, nullable=False)
+    unique_songs = Column(BigInteger, nullable=False)
+    unique_artists = Column(BigInteger, nullable=False)
+    song_variety_percentage = Column(Float(53), nullable=False)
+    artist_variety_percentage = Column(Float(53), nullable=False)
+
+
+class ExplicitPreference(Base):
+    __tablename__ = 'explicit_preference'
+    __table_args__ = {'schema': 'analysis'}
+
+    explicit = Column(Boolean, primary_key=True)
+    play_count = Column(BigInteger, nullable=False)
+    percentage = Column(Float(53), nullable=False)
+
+
+class HourOfDayListeningDistribution(Base):
+    __tablename__ = 'hour_of_day_listening_distribution'
+    __table_args__ = {'schema': 'analysis'}
+
+    hour_of_day = Column(Integer, primary_key=True)
+    play_count = Column(BigInteger, nullable=False)
+    percentage = Column(Float(53), nullable=False)
+
+
+class SessionBetweenSongs(Base):
+    __tablename__ = 'session_between_songs'
+    __table_args__ = {'schema': 'analysis'}
+
+    session_type = Column(Text, primary_key=True)
+    count = Column(BigInteger, nullable=False)
+    percentage = Column(Float(53), nullable=False)
+
+
+class SongDurationPreference(Base):
+    __tablename__ = 'song_duration_preference'
+    __table_args__ = {'schema': 'analysis'}
+
+    duration_category = Column(Text, primary_key=True)
+    play_count = Column(BigInteger, nullable=False)
+    percentage = Column(Float(53), nullable=False)
+
+
+class SongPopularityDistribution(Base):
+    __tablename__ = 'song_popularity_distribution'
+    __table_args__ = {'schema': 'analysis'}
+
+    popularity_bracket = Column(Integer, primary_key=True)
+    play_count = Column(BigInteger, nullable=False)
+    popularity_range = Column(Text, nullable=False)
+    percentage = Column(Float(53), nullable=False)
