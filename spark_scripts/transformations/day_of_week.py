@@ -6,7 +6,7 @@ from utils.etl_base import SparkETLBase, read_parquet
 
 class DayOfWeekETL(SparkETLBase):
     def transform(self, fact_history_df=None):
-        fact_history = fact_history_df or read_parquet(self.spark, "/data/landing/fact_history")
+        fact_history = fact_history_df or read_parquet(self.spark, "/data/spotify_analysis/landing/public.fact_history")
 
         daily_stats = fact_history.groupBy(
             F.date_format("played_at", "EEEE").alias("day_of_week")
@@ -31,4 +31,5 @@ class DayOfWeekETL(SparkETLBase):
             .when(F.col("day_of_week") == "Saturday", 7)
         ).orderBy("day_number")
 
+        daily_stats.show()
         return daily_stats.drop("day_number") 

@@ -9,9 +9,9 @@ from pyspark.sql.window import Window
 
 class HourOfDayPlayCountETL(SparkETLBase):
     def transform(self, fact_history_df=None):
-        fact_history = fact_history_df or read_parquet(self.spark, "/data/landing/fact_history")
+        fact_history = fact_history_df or read_parquet(self.spark, "/data/spotify_analysis/landing/public.fact_history")
 
-        return fact_history.select(
+        hour_of_day_play_count = fact_history.select(
             F.hour("played_at").alias("hour_of_day")
         ).groupBy("hour_of_day").agg(
             F.count("*").alias("play_count")
@@ -19,3 +19,6 @@ class HourOfDayPlayCountETL(SparkETLBase):
             "percentage",
             F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy()), 2)
         ).orderBy(F.desc("percentage"))
+        
+        hour_of_day_play_count.show()
+        return hour_of_day_play_count

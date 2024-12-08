@@ -10,7 +10,7 @@ from pyspark.sql.window import Window
 
 class SessionBetweenSongsETL(SparkETLBase):
     def transform(self, fact_history_df=None):
-        fact_history = fact_history_df or read_parquet(self.spark, "/data/landing/fact_history")
+        fact_history = fact_history_df or read_parquet(self.spark, "/data/spotify_analysis/landing/public.fact_history")
 
         # Calculate the time to the next song
         window_spec = Window.orderBy("played_at")
@@ -36,7 +36,7 @@ class SessionBetweenSongsETL(SparkETLBase):
         total_count = session_counts_df.agg(F.sum("count").alias("total_count")).collect()[0]["total_count"]
 
         # Calculate percentages
-        return session_counts_df.withColumn(
+        session_between_songs = session_counts_df.withColumn(
             "percentage",
             F.round((F.col("count") / total_count) * 100, 2)
         ).orderBy(
@@ -44,3 +44,6 @@ class SessionBetweenSongsETL(SparkETLBase):
             .when(F.col("session_type") == "Short Break", 2)
             .otherwise(3)
         )
+        
+        session_between_songs.show()
+        return session_between_songs

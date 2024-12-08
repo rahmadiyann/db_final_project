@@ -9,7 +9,7 @@ from transformations.album_completion_rate import AlbumCompletionETL
 from transformations.album_release_year_play_count import AlbumReleaseYearETL
 from transformations.day_of_week import DayOfWeekETL
 from transformations.explicit_pref import ExplicitPreferenceETL
-from spark_scripts.transformations.statistics import StatisticsETL
+from transformations.statistics import StatisticsETL
 from transformations.artist_longest_streak import ArtistLongestStreak
 from transformations.longest_listening_day import BiggestListeningDateETL
 from transformations.top_played_song_detail import TopSongDetail
@@ -17,21 +17,21 @@ from transformations.top_played_song_detail import TopSongDetail
 
 # Add base ETL for source tables
 SOURCE_TABLES = {
-    'dim_artist': SparkETLBase,
-    'dim_song': SparkETLBase,
-    'dim_album': SparkETLBase,
-    'fact_history': SparkETLBase,
+    'public.dim_artist': SparkETLBase,
+    'public.dim_song': SparkETLBase,
+    'public.dim_album': SparkETLBase,
+    'public.fact_history': SparkETLBase,
 }
 
 ANALYSIS_TABLES = {
-    'analysis.album_completion_rate': AlbumCompletionETL,
+    'analysis.album_completion_analysis': AlbumCompletionETL,
     'analysis.album_release_year_play_count': AlbumReleaseYearETL,
-    'analysis.day_of_week': DayOfWeekETL,
+    'analysis.day_of_week_listening_distribution': DayOfWeekETL,
     'analysis.explicit_preference': ExplicitPreferenceETL,
-    'analysis.hour_of_day_play_count': HourOfDayPlayCountETL,
-    'analysis.popularity_pref': PopularityPrefETL,
+    'analysis.hour_of_day_listening_distribution': HourOfDayPlayCountETL,
+    'analysis.song_popularity_distribution': PopularityPrefETL,
     'analysis.session_between_songs': SessionBetweenSongsETL,
-    'analysis.song_dur_pref': SongDurPrefETL,
+    'analysis.song_duration_preference': SongDurPrefETL,
     'metrics.statistics': StatisticsETL,
     'metrics.artist_longest_streak': ArtistLongestStreak,
     'metrics.longest_listening_day': BiggestListeningDateETL,

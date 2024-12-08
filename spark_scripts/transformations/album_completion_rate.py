@@ -7,11 +7,11 @@ from utils.etl_base import SparkETLBase, read_parquet
 class AlbumCompletionETL(SparkETLBase):
     def transform(self, fact_history_df=None, dim_album_df=None, dim_artist_df=None):
         # Use provided DataFrames or read from landing zone using helper function
-        fact_history = fact_history_df or read_parquet(self.spark, "/data/landing/fact_history")
-        dim_album = dim_album_df or read_parquet(self.spark, "/data/landing/dim_album")
-        dim_artist = dim_artist_df or read_parquet(self.spark, "/data/landing/dim_artist")
+        fact_history = fact_history_df or read_parquet(self.spark, "/data/spotify_analysis/landing/public.fact_history")
+        dim_album = dim_album_df or read_parquet(self.spark, "/data/spotify_analysis/landing/public.dim_album")
+        dim_artist = dim_artist_df or read_parquet(self.spark, "/data/spotify_analysis/landing/public.dim_artist")
         
-        return fact_history.join(
+        album_completion_rate = fact_history.join(
             dim_album, "album_id"
         ).join(
             dim_artist, "artist_id"
@@ -35,3 +35,6 @@ class AlbumCompletionETL(SparkETLBase):
         ).orderBy(
             F.desc("completion_percentage"), F.desc("total_tracks")
         ).limit(10) 
+        
+        album_completion_rate.show()
+        return album_completion_rate

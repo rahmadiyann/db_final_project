@@ -9,26 +9,32 @@ def create_spark_session(app_name):
         .config("spark.jars", "/jars/postgresql-42.7.4.jar ") \
         .getOrCreate()
 
-def get_db_properties(table: str = None):
+def get_db_properties(db: str = "source", table: str = None):
+    """Get database connection properties based on database type and table name.
+    
+    Args:
+        db: Database type ("source" or "datamart")
+        table: Table name including schema (e.g. "public.dim_artist")
+        
+    Returns:
+        dict: Database connection properties
+    """
     if not table:
         raise ValueError("Table name is required")
     
-    return {
+    # Common properties for both source and datamart
+    props = {
         'url': os.getenv('DATAENG_JDBC_POSTGRES_URI'),
         'user': os.getenv('POSTGRES_USER'),
         'password': os.getenv('POSTGRES_PASSWORD'),
         'driver': 'org.postgresql.Driver',
-        'table': table
+        'dbtable': table
     }
     
-
-def get_db_properties(db: str = "source", table: str = None):
-    if db == "source":
-        return get_db_properties(table)
-    elif db == "datamart":
-        return get_db_properties(table)
-    else:
+    if db not in ["source", "datamart"]:
         raise ValueError(f"Invalid database: {db}")
+        
+    return props
 
 def load_table(spark, db, table_name):
     props = get_db_properties(db, table_name)
@@ -42,7 +48,7 @@ def load_table(spark, db, table_name):
         .option("driver", props['driver']) \
         .load()
         
-    if table_name == 'fact_history':
+    if table_name == 'public.fact_history':
         last_month_history = get_last_month_data(df)
         return last_month_history
     
@@ -97,7 +103,7 @@ def read_parquet(spark: SparkSession, path: str):
     
     Args:
         spark: SparkSession
-        path: Full path including table name (/data/landing/dim_song, etc.)
+        path: Full path including table name (/data/spotify_analysis/landing/dim_song, etc.)
     """
     month_year = datetime.now().strftime("%Y%m")
     path = path.rstrip('/')

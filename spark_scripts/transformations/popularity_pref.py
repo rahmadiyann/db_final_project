@@ -8,10 +8,10 @@ from utils.etl_base import SparkETLBase, read_parquet
 
 class PopularityPrefETL(SparkETLBase):
     def transform(self, fact_history_df=None, dim_song_df=None):
-        fact_history = fact_history_df or read_parquet(self.spark, "/data/landing/fact_history")
-        dim_song = dim_song_df or read_parquet(self.spark, "/data/landing/dim_song")
+        fact_history = fact_history_df or read_parquet(self.spark, "/data/spotify_analysis/landing/public.fact_history")
+        dim_song = dim_song_df or read_parquet(self.spark, "/data/spotify_analysis/landing/public.dim_song")
 
-        return fact_history.join(
+        popularity_pref = fact_history.join(
             dim_song, "song_id"
         ).select(
             ((F.col("popularity") / 10).cast("int")).alias("popularity_bracket")
@@ -28,3 +28,6 @@ class PopularityPrefETL(SparkETLBase):
             "percentage",
             F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy()), 2)
         ).orderBy("popularity_bracket")
+        
+        popularity_pref.show()
+        return popularity_pref

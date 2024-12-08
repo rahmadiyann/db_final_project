@@ -66,9 +66,9 @@ class SparkETLBase:
             
             self.write_destination(df, db='datamart')
             
-            logger.info(f"=== {self.table_name} Summary ===")
-            if self.table_name == 'fact_history':
-                logger.info(f"Last month listening history count: {df.count()}\n{df.show(truncate=False)}")
+            if self.table_name not in ['public.dim_artist', 'public.dim_song', 'public.dim_album']:
+                logger.info(f"=== {self.table_name} Summary ===")
+                logger.info(f"Count: {df.count()}\n{df.show(truncate=False)}")
             
         except Exception as e:
             logger.error("An error occurred:", e)
