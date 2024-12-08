@@ -37,6 +37,8 @@ stop-dashboard:
 	@docker stop ${DASHBOARD_CONTAINER_NAME}
 stop-debezium:
 	@docker stop ${DEBEZIUM_CONTAINER_NAME}
+stop-jupyter:
+	@docker stop ${JUPYTER_CONTAINER_NAME}
 
 docker-build:
 	@echo '__________________________________________________________'
@@ -176,9 +178,6 @@ postgres-insert-artist:
 postgres-insert-history:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/insert_main_history.sql
 
-postgres-truncate-datamart:
-	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/truncate_analysis.sql
-
 # Connecting to postgres containers
 connect-main-postgres:
 	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
@@ -209,30 +208,11 @@ postgres-count-check:
 
 postgres-truncate: postgres-truncate-main postgres-truncate-replica
 postgres-truncate-main:
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "dim_album" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "dim_artist" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "dim_song" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "fact_history";'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.album_completion_analysis" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.song_duration_preference" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.explicit_preference" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.day_of_week_listening_distribution" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.session_between_songs" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.song_popularity_distribution" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.hour_of_day_listening_distribution" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "analysis.album_release_year_play_count" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.longest_streak_of_top_listened_artist" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.total_minutes_listened" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.total_minutes_listened_by_day_of_week" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.total_songs_played" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.top_played_songs" CASCADE;'
-	@docker exec ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c 'TRUNCATE TABLE "metrics.biggest_listening_day" CASCADE;'
+	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/truncate_olap.sql
+	@docker exec -it ${POSTGRES_CONTAINER_NAME} psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f sql/truncate_analysis.sql
 
 postgres-truncate-replica:
-	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_dim_album" CASCADE;'
-	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_dim_artist" CASCADE;'
-	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_dim_song" CASCADE;'
-	@docker exec ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -c 'TRUNCATE TABLE "dataeng-postgres_public_fact_history";'
+	@docker exec -it ${POSTGRES_REPLICA_CONTAINER_NAME} psql -U ${POSTGRES_REPLICA_USER} -d ${POSTGRES_REPLICA_DB} -f sql/truncate_olap_replica.sql
 
 # Debezium related commands
 # Creating Debezium instance and topics necessary
