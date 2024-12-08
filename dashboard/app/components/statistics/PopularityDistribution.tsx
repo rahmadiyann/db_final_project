@@ -106,7 +106,7 @@ export default function PopularityDistribution({
             transition={{ duration: 1.5, delay: 0.5 }}
           >
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Let&apos;s see where you stand in the popularity game...
+              Let's see where you stand in the popularity game...
             </p>
           </motion.div>
         </motion.div>

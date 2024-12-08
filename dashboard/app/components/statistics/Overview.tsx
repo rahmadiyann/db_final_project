@@ -123,7 +123,7 @@ export default function Overview({ totalMinutesListened }: OverviewProps) {
         }}
       >
         <p className="text-gray-400 text-sm uppercase tracking-wider">
-          Let&apos;s explore your musical journey ✨
+          Let's explore your musical journey ✨
         </p>
         <div className="flex justify-center">
           <motion.div

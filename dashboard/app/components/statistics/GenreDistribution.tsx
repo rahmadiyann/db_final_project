@@ -157,8 +157,8 @@ export default function GenreDistribution() {
             transition={{ duration: 1.5, delay: 0.5 }}
           >
             <p className="text-gray-400 max-w-2xl mx-auto">
-              From beats to riffs, let&apos;s paint a picture of your musical
-              taste! What colors your sonic world? 🌈
+              From beats to riffs, let's paint a picture of your musical taste!
+              What colors your sonic world? 🌈
             </p>
           </motion.div>
         </motion.div>
@@ -183,8 +183,8 @@ export default function GenreDistribution() {
               <h3 className="text-xl font-semibold mb-2">Fun Fact 🎈</h3>
               <p className="text-gray-400">
                 {dominantGenre.percentage > 40
-                  ? "You&apos;re a true genre loyalist! When you find your groove, you stick to it! 🎯"
-                  : "You&apos;re keeping it diverse! Your playlist is like a music festival lineup! 🎪"}
+                  ? "You're a true genre loyalist! When you find your groove, you stick to it! 🎯"
+                  : "You're keeping it diverse! Your playlist is like a music festival lineup! 🎪"}
               </p>
             </motion.div>
           </div>

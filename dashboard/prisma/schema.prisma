@@ -103,7 +103,7 @@ model artist_longest_streak {
 model longest_listening_day {
   id                Int      @id @default(autoincrement())
   date              DateTime @db.Date
-  total_milliseconds BigInt
+  total_miliseconds BigInt
   songs_played      Int
 
   @@schema("metrics")

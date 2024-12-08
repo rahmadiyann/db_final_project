@@ -211,7 +211,7 @@ export default function DailyRhythm({ hourDistribution }: DailyRhythmProps) {
                 is your power hour! {getPeakHourMood()}
                 <br />
                 <span className="text-sm">
-                  That&apos;s when{" "}
+                  That's when{" "}
                   <CountUp
                     end={peakHour.percentage}
                     duration={2}
@@ -233,8 +233,8 @@ export default function DailyRhythm({ hourDistribution }: DailyRhythmProps) {
               <h3 className="text-xl font-semibold mb-2">Fun Fact 💫</h3>
               <p className="text-gray-400">
                 {nightHours > morningHours
-                  ? "You&apos;ve spent more time vibing at night than during breakfast! Maybe that&apos;s why coffee was invented? ☕"
-                  : "You&apos;re more likely to be jamming with your breakfast than your midnight snack! Early bird gets the bops! 🎵"}
+                  ? "You've spent more time vibing at night than during breakfast! Maybe that's why coffee was invented? ☕"
+                  : "You're more likely to be jamming with your breakfast than your midnight snack! Early bird gets the bops! 🎵"}
               </p>
             </motion.div>
           </div>

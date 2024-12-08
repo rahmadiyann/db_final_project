@@ -116,7 +116,7 @@ export default function WeeklyPattern({ dayDistribution }: WeeklyPatternProps) {
             transition={{ duration: 1.5, delay: 0.5 }}
           >
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Let&apos;s see how your music vibes flow through the week...
+              Let's see how your music vibes flow through the week...
             </p>
           </motion.div>
         </motion.div>

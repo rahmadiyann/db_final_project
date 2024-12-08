@@ -38,18 +38,18 @@ export default function AlbumCompletion({
 
   const getListenerDescription = () => {
     if (completedAlbums > albumCompletions.length * 0.7) {
-      return "You&apos;re not here to skip tracks! When you start an album, you&apos;re in it for the long haul. Artists love listeners like you! 🎸";
+      return "You're not here to skip tracks! When you start an album, you're in it for the long haul. Artists love listeners like you! 🎸";
     }
     if (avgCompletion > 75) {
       return "You really appreciate the album format. Taking in the full artistic vision, one album at a time! 🎨";
     }
     if (inProgressAlbums > albumCompletions.length * 0.8) {
-      return "So many albums, so little time! You&apos;re on a mission to explore every corner of your music library. 🚀";
+      return "So many albums, so little time! You're on a mission to explore every corner of your music library. 🚀";
     }
     if (avgCompletion < 30) {
-      return "You know what you like! Why waste time when you&apos;ve found the perfect track? Hit that next button! ⏭️";
+      return "You know what you like! Why waste time when you've found the perfect track? Hit that next button! ⏭️";
     }
-    return "You&apos;ve got a healthy mix of full album deep-dives and quick hits. Keeping it interesting! 🎯";
+    return "You've got a healthy mix of full album deep-dives and quick hits. Keeping it interesting! 🎯";
   };
 
   const getCompletionMessage = (percentage: number) => {
@@ -81,7 +81,7 @@ export default function AlbumCompletion({
             transition={{ duration: 1.5, delay: 0.5 }}
           >
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Are you a track-skipper or an album purist? Let&apos;s see how
+              Are you a track-skipper or an album purist? Let's see how
               thoroughly you explore your albums. No judgment... well, maybe a
               little! 😏
             </p>

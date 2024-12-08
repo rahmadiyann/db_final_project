@@ -48,9 +48,9 @@ export default function ListeningPreferences({
             transition={{ duration: 1.5, delay: 0.5 }}
           >
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Let&apos;s see if you&apos;re a sprinter or a marathon runner when
-              it comes to your tunes. Some like it quick, others like to take
-              their sweet time... 😏
+              Let's see if you're a sprinter or a marathon runner when it comes
+              to your tunes. Some like it quick, others like to take their sweet
+              time... 😏
             </p>
           </motion.div>
         </motion.div>
@@ -80,7 +80,7 @@ export default function ListeningPreferences({
                     <div className="text-gray-400">{category}</div>
                     <div className="text-sm text-gray-500 mt-2">
                       {category === "Short (&lt;3 min)"
-                        ? "For when you&apos;re feeling extra snippy ✂️"
+                        ? "For when you're feeling extra snippy ✂️"
                         : category === "Medium (3-5 min)"
                         ? "The Goldilocks zone - just right 👌"
                         : "For the musical adventurers 🗺️"}
@@ -101,9 +101,9 @@ export default function ListeningPreferences({
                 {dominantDuration.category === "Short (&lt; 3 min)" &&
                   " - Attention span of a goldfish, eh? 🐠"}
                 {dominantDuration.category === "Medium (3-5 min)" &&
-                  " - Playing it safe, aren&apos;t we? 😌"}
+                  " - Playing it safe, aren't we? 😌"}
                 {dominantDuration.category === "Long (&gt; 5 min)" &&
-                  " - Someone&apos;s got commitment issues... to short songs! 🎸"}
+                  " - Someone's got commitment issues... to short songs! 🎸"}
               </p>
             </div>
           </div>
@@ -113,9 +113,9 @@ export default function ListeningPreferences({
           <div className="text-center space-y-4 mb-8">
             <h2 className="text-3xl font-bold">The Naughty or Nice List 😇</h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Time to spill the tea on your content preferences! Let Let&apos;s
-              see if you&apos;re keeping it PG or living life on the edge.
-              Don&apos;t worry, we won&apos;t tell your mom... 🤫
+              Time to spill the tea on your content preferences! Let Let's see
+              if you're keeping it PG or living life on the edge. Don't worry,
+              we won't tell your mom... 🤫
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

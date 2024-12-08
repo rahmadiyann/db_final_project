@@ -42,7 +42,7 @@ export default function ListeningSessions({
       case "background":
         return "Setting the mood while you do your thing";
       case "party":
-        return "Turn up the volume, it&apos;s time to celebrate! 🎊";
+        return "Turn up the volume, it's time to celebrate! 🎊";
       case "chill":
         return "Keeping it cool and relaxed, vibing with the flow";
       case "workout":
@@ -78,7 +78,7 @@ export default function ListeningSessions({
     const type = dominantSession.sessionType.toLowerCase();
     switch (type) {
       case "focused":
-        return "You&apos;re all about that productivity playlist! Music is your secret weapon for getting things done. 🚀";
+        return "You're all about that productivity playlist! Music is your secret weapon for getting things done. 🚀";
       case "background":
         return "Music is your constant companion, providing the perfect backdrop to your daily adventures. 🌟";
       case "party":
@@ -90,7 +90,7 @@ export default function ListeningSessions({
       case "commute":
         return "Turning every journey into a mini concert. Traffic jams? More like jam sessions! 🚗";
       default:
-        return "You&apos;ve got a playlist for every moment - keeping life interesting one song at a time! 🎵";
+        return "You've got a playlist for every moment - keeping life interesting one song at a time! 🎵";
     }
   };
 
@@ -115,8 +115,8 @@ export default function ListeningSessions({
             transition={{ duration: 1.5, delay: 0.5 }}
           >
             <p className="text-gray-400 max-w-2xl mx-auto">
-              From focused work sessions to full-on party mode, let&apos;s see
-              how you use music to enhance different moments of your life! 🎵
+              From focused work sessions to full-on party mode, let's see how
+              you use music to enhance different moments of your life! 🎵
             </p>
           </motion.div>
         </motion.div>

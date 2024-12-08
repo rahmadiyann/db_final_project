@@ -76,8 +76,7 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
             transition={{ duration: 1.5, delay: 0.5 }}
           >
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Everyone has that one day when they just can&apos;t stop the
-              music...
+              Everyone has that one day when they just can't stop the music...
             </p>
           </motion.div>
         </motion.div>
