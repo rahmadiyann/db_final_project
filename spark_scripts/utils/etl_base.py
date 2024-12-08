@@ -10,6 +10,7 @@ from .spark_helper import (
     read_parquet
 )
 import logging
+from pyspark.sql.functions import monotonically_increasing_id, row_number
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -54,6 +55,11 @@ class SparkETLBase:
     def transform(self, df):
         """Override this method in specific ETL classes"""
         return df
+
+    def add_id_column(self, df, id_column_name="id"):
+        """Add an auto-incrementing ID column to the DataFrame"""
+        window = Window.orderBy(monotonically_increasing_id())
+        return df.withColumn(id_column_name, row_number().over(window))
 
     def run(self):
         try:
