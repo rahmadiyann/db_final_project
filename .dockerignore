@@ -1,0 +1,9 @@
+**/node_modules
+**/.next
+**/.git
+**/npm-debug.log
+**/README.md
+**/LICENSE
+**/.vscode
+**/.idea
+**/*.log 
