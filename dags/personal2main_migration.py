@@ -62,6 +62,7 @@ with DAG(
     catchup=False,
     concurrency=1,
     max_active_runs=1,
+    tags=['once', 'migration'],
     doc_md=doc_md
 ) as dag:
     

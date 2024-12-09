@@ -147,7 +147,8 @@ with DAG(
     schedule_interval='@hourly',
     concurrency=1,
     max_active_runs=1,
-    catchup=False
+    catchup=False,
+    tags=['hourly'],
 ) as dag:
 
     start = EmptyOperator(task_id='start')

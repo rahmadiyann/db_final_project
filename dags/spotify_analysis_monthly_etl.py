@@ -65,6 +65,7 @@ dag = DAG(
     max_active_runs=1,
     catchup=False,
     doc_md=doc_md,
+    tags=['monthly'],
 )
 
 def create_spark_task(task_id, stage, destination, table, transform=False):

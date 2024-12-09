@@ -1,0 +1,561 @@
+{
+  "artist_longest_streak": [
+    {
+      "artist_id": "31SBgHxc8eqZUk9MdveH42",
+      "artist_name": "PREP",
+      "artist_image_url": "https://i.scdn.co/image/ab6761610000e5eb80855977de7fd4c56da3642f",
+      "streak_days": 6,
+      "date_from": "2024-11-12",
+      "date_until": "2024-11-17"
+    }
+  ],
+  "album_completion_analysis": [
+    {
+      "album_title": "Malibu Nights",
+      "artist_name": "LANY",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b273c4dae9528b2a8408f463eb17",
+      "total_tracks": 9,
+      "unique_tracks_played": 6,
+      "completion_percentage": 66.67,
+      "listening_status": "\ud83c\udfa7 Half"
+    },
+    {
+      "album_title": "The Programme",
+      "artist_name": "PREP",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b273bcebf4f40b2a435a4b16fad9",
+      "total_tracks": 10,
+      "unique_tracks_played": 6,
+      "completion_percentage": 60.0,
+      "listening_status": "\ud83c\udfa7 Half"
+    },
+    {
+      "album_title": "gg bb xx",
+      "artist_name": "LANY",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b2732d9e8e3e016cf68d53536c64",
+      "total_tracks": 12,
+      "unique_tracks_played": 6,
+      "completion_percentage": 50.0,
+      "listening_status": "\ud83c\udfa7 Half"
+    },
+    {
+      "album_title": "PREP",
+      "artist_name": "PREP",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b27391e6b5d4c6ffec6a50adda3f",
+      "total_tracks": 10,
+      "unique_tracks_played": 5,
+      "completion_percentage": 50.0,
+      "listening_status": "\ud83c\udfa7 Half"
+    },
+    {
+      "album_title": "Cigarettes After Sex",
+      "artist_name": "Cigarettes After Sex",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b27312b69bf576f5e80291f75161",
+      "total_tracks": 10,
+      "unique_tracks_played": 5,
+      "completion_percentage": 50.0,
+      "listening_status": "\ud83c\udfa7 Half"
+    },
+    {
+      "album_title": "mama's boy",
+      "artist_name": "LANY",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b2733621fd5a6b01ba2f7f716b87",
+      "total_tracks": 14,
+      "unique_tracks_played": 6,
+      "completion_percentage": 42.86,
+      "listening_status": "\ud83d\udcbf Partial"
+    },
+    {
+      "album_title": "Borderline",
+      "artist_name": "Christian Kuria",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b2735d9f44aad41cfdf90f4d039a",
+      "total_tracks": 7,
+      "unique_tracks_played": 3,
+      "completion_percentage": 42.86,
+      "listening_status": "\ud83d\udcbf Partial"
+    },
+    {
+      "album_title": "NEVER ENOUGH",
+      "artist_name": "Daniel Caesar",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b2737c68face1dc58127f3a7b1cc",
+      "total_tracks": 15,
+      "unique_tracks_played": 6,
+      "completion_percentage": 40.0,
+      "listening_status": "\ud83d\udcbf Partial"
+    },
+    {
+      "album_title": "METRO BOOMIN PRESENTS SPIDER-MAN: ACROSS THE SPIDER-VERSE (SOUNDTRACK FROM AND INSPIRED BY THE MOTION PICTURE)",
+      "artist_name": "Metro Boomin",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b2736ed9aef791159496b286179f",
+      "total_tracks": 13,
+      "unique_tracks_played": 5,
+      "completion_percentage": 38.46,
+      "listening_status": "\ud83d\udcbf Partial"
+    },
+    {
+      "album_title": "Drive Slow",
+      "artist_name": "Mac Ayres",
+      "album_image_url": "https://i.scdn.co/image/ab67616d0000b27317a3b492679522901c5da94e",
+      "total_tracks": 9,
+      "unique_tracks_played": 3,
+      "completion_percentage": 33.33,
+      "listening_status": "\ud83d\udcbf Partial"
+    }
+  ],
+  "album_release_year_play_count": [
+    {
+      "release_year": 2024,
+      "play_count": 90
+    },
+    {
+      "release_year": 2023,
+      "play_count": 147
+    },
+    {
+      "release_year": 2022,
+      "play_count": 104
+    },
+    {
+      "release_year": 2021,
+      "play_count": 109
+    },
+    {
+      "release_year": 2020,
+      "play_count": 118
+    },
+    {
+      "release_year": 2019,
+      "play_count": 89
+    },
+    {
+      "release_year": 2018,
+      "play_count": 125
+    },
+    {
+      "release_year": 2017,
+      "play_count": 97
+    },
+    {
+      "release_year": 2016,
+      "play_count": 48
+    },
+    {
+      "release_year": 2015,
+      "play_count": 18
+    },
+    {
+      "release_year": 2014,
+      "play_count": 2
+    },
+    {
+      "release_year": 2013,
+      "play_count": 9
+    },
+    {
+      "release_year": 2012,
+      "play_count": 11
+    },
+    {
+      "release_year": 2011,
+      "play_count": 4
+    },
+    {
+      "release_year": 2010,
+      "play_count": 6
+    },
+    {
+      "release_year": 2009,
+      "play_count": 3
+    },
+    {
+      "release_year": 2008,
+      "play_count": 3
+    },
+    {
+      "release_year": 2007,
+      "play_count": 5
+    },
+    {
+      "release_year": 2006,
+      "play_count": 6
+    },
+    {
+      "release_year": 2005,
+      "play_count": 1
+    },
+    {
+      "release_year": 2003,
+      "play_count": 1
+    },
+    {
+      "release_year": 2002,
+      "play_count": 7
+    },
+    {
+      "release_year": 2001,
+      "play_count": 5
+    },
+    {
+      "release_year": 2000,
+      "play_count": 4
+    },
+    {
+      "release_year": 1999,
+      "play_count": 4
+    },
+    {
+      "release_year": 1997,
+      "play_count": 9
+    },
+    {
+      "release_year": 1996,
+      "play_count": 1
+    },
+    {
+      "release_year": 1995,
+      "play_count": 3
+    },
+    {
+      "release_year": 1994,
+      "play_count": 4
+    },
+    {
+      "release_year": 1991,
+      "play_count": 1
+    },
+    {
+      "release_year": 1990,
+      "play_count": 2
+    },
+    {
+      "release_year": 1987,
+      "play_count": 1
+    },
+    {
+      "release_year": 1986,
+      "play_count": 1
+    },
+    {
+      "release_year": 1980,
+      "play_count": 1
+    },
+    {
+      "release_year": 1979,
+      "play_count": 1
+    },
+    {
+      "release_year": 1978,
+      "play_count": 2
+    },
+    {
+      "release_year": 1977,
+      "play_count": 1
+    },
+    {
+      "release_year": 1965,
+      "play_count": 1
+    }
+  ],
+  "longest_listening_day": [
+    {
+      "date": "2024-11-16",
+      "total_miliseconds": 29640836,
+      "songs_played": 137
+    }
+  ],
+  "day_of_week_listening_distribution": [
+    {
+      "day_of_week": "Sunday",
+      "play_count": 23,
+      "unique_songs": 22,
+      "unique_artists": 16,
+      "song_variety_percentage": 95.65,
+      "artist_variety_percentage": 69.57
+    },
+    {
+      "day_of_week": "Monday",
+      "play_count": 159,
+      "unique_songs": 131,
+      "unique_artists": 64,
+      "song_variety_percentage": 82.39,
+      "artist_variety_percentage": 40.25
+    },
+    {
+      "day_of_week": "Tuesday",
+      "play_count": 103,
+      "unique_songs": 96,
+      "unique_artists": 66,
+      "song_variety_percentage": 93.2,
+      "artist_variety_percentage": 64.08
+    },
+    {
+      "day_of_week": "Wednesday",
+      "play_count": 241,
+      "unique_songs": 215,
+      "unique_artists": 118,
+      "song_variety_percentage": 89.21,
+      "artist_variety_percentage": 48.96
+    },
+    {
+      "day_of_week": "Thursday",
+      "play_count": 108,
+      "unique_songs": 102,
+      "unique_artists": 60,
+      "song_variety_percentage": 94.44,
+      "artist_variety_percentage": 55.56
+    },
+    {
+      "day_of_week": "Friday",
+      "play_count": 197,
+      "unique_songs": 167,
+      "unique_artists": 95,
+      "song_variety_percentage": 84.77,
+      "artist_variety_percentage": 48.22
+    },
+    {
+      "day_of_week": "Saturday",
+      "play_count": 213,
+      "unique_songs": 199,
+      "unique_artists": 118,
+      "song_variety_percentage": 93.43,
+      "artist_variety_percentage": 55.4
+    }
+  ],
+  "hour_of_day_listening_distribution": [
+    {
+      "hour_of_day": 15,
+      "play_count": 122,
+      "percentage": 11.69
+    },
+    {
+      "hour_of_day": 12,
+      "play_count": 90,
+      "percentage": 8.62
+    },
+    {
+      "hour_of_day": 11,
+      "play_count": 83,
+      "percentage": 7.95
+    },
+    {
+      "hour_of_day": 7,
+      "play_count": 70,
+      "percentage": 6.7
+    },
+    {
+      "hour_of_day": 14,
+      "play_count": 67,
+      "percentage": 6.42
+    },
+    {
+      "hour_of_day": 6,
+      "play_count": 66,
+      "percentage": 6.32
+    },
+    {
+      "hour_of_day": 16,
+      "play_count": 62,
+      "percentage": 5.94
+    },
+    {
+      "hour_of_day": 3,
+      "play_count": 60,
+      "percentage": 5.75
+    },
+    {
+      "hour_of_day": 4,
+      "play_count": 60,
+      "percentage": 5.75
+    },
+    {
+      "hour_of_day": 13,
+      "play_count": 46,
+      "percentage": 4.41
+    },
+    {
+      "hour_of_day": 8,
+      "play_count": 43,
+      "percentage": 4.12
+    },
+    {
+      "hour_of_day": 5,
+      "play_count": 39,
+      "percentage": 3.74
+    },
+    {
+      "hour_of_day": 10,
+      "play_count": 38,
+      "percentage": 3.64
+    },
+    {
+      "hour_of_day": 2,
+      "play_count": 38,
+      "percentage": 3.64
+    },
+    {
+      "hour_of_day": 9,
+      "play_count": 36,
+      "percentage": 3.45
+    },
+    {
+      "hour_of_day": 17,
+      "play_count": 34,
+      "percentage": 3.26
+    },
+    {
+      "hour_of_day": 18,
+      "play_count": 24,
+      "percentage": 2.3
+    },
+    {
+      "hour_of_day": 19,
+      "play_count": 20,
+      "percentage": 1.92
+    },
+    {
+      "hour_of_day": 20,
+      "play_count": 18,
+      "percentage": 1.72
+    },
+    {
+      "hour_of_day": 21,
+      "play_count": 15,
+      "percentage": 1.44
+    },
+    {
+      "hour_of_day": 22,
+      "play_count": 12,
+      "percentage": 1.15
+    },
+    {
+      "hour_of_day": 1,
+      "play_count": 1,
+      "percentage": 0.1
+    }
+  ],
+  "statistics": [
+    {
+      "total_miliseconds": 211349937,
+      "total_songs_played": 572
+    }
+  ],
+  "top_played_song": [
+    {
+      "song_id": "3GCdLUSnKSMJhs4Tj6CV3s",
+      "song_title": "All The Stars (with SZA)",
+      "artist_id": "2YZyLoL8N0Wb9xBt1NhZWg",
+      "artist_name": "Kendrick Lamar",
+      "artist_image_url": "https://i.scdn.co/image/ab6761610000e5eb437b9e2a82505b3d93ff1022",
+      "play_count": 13,
+      "first_played_at": "2024-11-04T05:45:23.436000",
+      "last_played_at": "2024-11-30T12:02:40.651000"
+    }
+  ],
+  "session_between_songs": [
+    {
+      "session_type": "Continuous",
+      "count": 855,
+      "percentage": 81.9
+    },
+    {
+      "session_type": "Short Break",
+      "count": 117,
+      "percentage": 11.21
+    },
+    {
+      "session_type": "Long Break",
+      "count": 72,
+      "percentage": 6.9
+    }
+  ],
+  "song_duration_preference": [
+    {
+      "duration_category": "Medium (3-5 min)",
+      "play_count": 637,
+      "percentage": 61.02
+    },
+    {
+      "duration_category": "Short (<3 min)",
+      "play_count": 355,
+      "percentage": 34.0
+    },
+    {
+      "duration_category": "Long (>5 min)",
+      "play_count": 52,
+      "percentage": 4.98
+    }
+  ],
+  "song_popularity_distribution": [
+    {
+      "popularity_bracket": 0,
+      "play_count": 4,
+      "popularity_range": "0-10",
+      "percentage": 0.38
+    },
+    {
+      "popularity_bracket": 1,
+      "play_count": 9,
+      "popularity_range": "10-20",
+      "percentage": 0.86
+    },
+    {
+      "popularity_bracket": 2,
+      "play_count": 13,
+      "popularity_range": "20-30",
+      "percentage": 1.25
+    },
+    {
+      "popularity_bracket": 3,
+      "play_count": 61,
+      "popularity_range": "30-40",
+      "percentage": 5.84
+    },
+    {
+      "popularity_bracket": 4,
+      "play_count": 91,
+      "popularity_range": "40-50",
+      "percentage": 8.72
+    },
+    {
+      "popularity_bracket": 5,
+      "play_count": 236,
+      "popularity_range": "50-60",
+      "percentage": 22.61
+    },
+    {
+      "popularity_bracket": 6,
+      "play_count": 233,
+      "popularity_range": "60-70",
+      "percentage": 22.32
+    },
+    {
+      "popularity_bracket": 7,
+      "play_count": 200,
+      "popularity_range": "70-80",
+      "percentage": 19.16
+    },
+    {
+      "popularity_bracket": 8,
+      "play_count": 180,
+      "popularity_range": "80-90",
+      "percentage": 17.24
+    },
+    {
+      "popularity_bracket": 9,
+      "play_count": 17,
+      "popularity_range": "90-100",
+      "percentage": 1.63
+    }
+  ],
+  "explicit_preference": [
+    {
+      "explicit": true,
+      "play_count": 310,
+      "percentage": 29.69
+    },
+    {
+      "explicit": false,
+      "play_count": 734,
+      "percentage": 70.31
+    }
+  ]
+}

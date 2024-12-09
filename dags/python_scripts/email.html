@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Monthly Music Journey</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+      .hover-pulse:hover {
+        animation: pulse 1s infinite;
+      }
+      .gradient-text {
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+      }
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .card-bg {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(10px);
+      }
+    </style>
+  </head>
+  <body
+    class="custom-bg font-sans leading-normal tracking-normal text-white min-h-screen"
+  >
+    <div class="max-w-5xl mx-auto my-8 p-8">
+      <header class="text-center mb-12">
+        <h1 class="text-5xl font-bold mb-4 gradient-text">
+          Your Music Universe
+        </h1>
+        <p class="text-xl text-black">
+          A Journey Through Your
+          <span id="current-month">Monthly</span> Soundscape 🎵
+        </p>
+      </header>
+
+      <!-- Opening Statement -->
+      <div id="opening-statement" class="mb-12">
+        <!-- Opening content will be injected here -->
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div id="top-played-song-data" class="card-hover"></div>
+        <div id="longest-listening-day-data" class="card-hover"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div id="artist-streak-data" class="card-hover"></div>
+        <div id="listening-habits-data" class="card-hover"></div>
+      </div>
+
+      <!-- AI Analysis -->
+      <div id="ai-analysis" class="space-y-8">
+        <!-- Rest of AI content will be injected here -->
+      </div>
+
+      <!-- Footer -->
+      <footer class="text-center mt-16 text-gray-400">
+        <p>Created with 💖 by Your Music Analytics Team</p>
+        <p class="text-sm mt-2">Keep the music playing! 🎶</p>
+      </footer>
+    </div>
+  </body>
+</html>
