@@ -89,8 +89,6 @@ dashboard-create:
 	@echo 'Creating Dashboard Instance ...'
 	@echo '__________________________________________________________'
 	@docker compose -f ./docker/docker-compose-dashboard.yml --env-file .env up -d
-	@echo 'Waiting for Dashboard to be ready...'
-	@sh -c 'until docker logs docker-dashboard-1 2>&1 | grep -q "✓ Ready in"; do sleep 1; done' || (echo "Timeout waiting for Dashboard to start" && exit 1)
 	@echo '✨ Dashboard is ready at http://localhost:3000'
 	@echo '==========================================================='
 
