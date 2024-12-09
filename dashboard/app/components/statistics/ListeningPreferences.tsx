@@ -61,7 +61,7 @@ export default function ListeningPreferences({
           transition={{ duration: 1.5, delay: 0.5 }}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {["Short (&lt;3 min)", "Medium (3-5 min)", "Long (&gt;5 min)"].map(
+            {["Short (<3 min)", "Medium (3-5 min)", "Long (>5 min)"].map(
               (category, index) => {
                 const pref = durationPreference.find(
                   (p) => p.category === category
@@ -79,7 +79,7 @@ export default function ListeningPreferences({
                     </div>
                     <div className="text-gray-400">{category}</div>
                     <div className="text-sm text-gray-500 mt-2">
-                      {category === "Short (&lt;3 min)"
+                      {category === "Short (<3 min)"
                         ? "For when you're feeling extra snippy ✂️"
                         : category === "Medium (3-5 min)"
                         ? "The Goldilocks zone - just right 👌"

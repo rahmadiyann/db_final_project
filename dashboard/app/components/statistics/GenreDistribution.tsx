@@ -94,7 +94,7 @@ export default function GenreDistribution() {
   );
 
   const chartData = {
-    labels: genres.map((genre) => `${genre.emoji} ${genre.name}`),
+    labels: genres.map((genre) => `${genre.name}`),
     datasets: [
       {
         data: genres.map((genre) => genre.percentage),
@@ -158,7 +158,7 @@ export default function GenreDistribution() {
           >
             <p className="text-gray-400 max-w-2xl mx-auto">
               From beats to riffs, let's paint a picture of your musical taste!
-              What colors your sonic world? 🌈
+              What colors your sonic world?
             </p>
           </motion.div>
         </motion.div>

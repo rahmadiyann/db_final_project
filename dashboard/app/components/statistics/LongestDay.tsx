@@ -15,10 +15,9 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
   const songsPerMinute = songsPerHour / 60;
 
   const getListenerMood = () => {
-    if (longestListeningDay.playCount > 300)
-      return "Absolute Music Marathon! 🏃‍♂️";
-    if (longestListeningDay.playCount > 200) return "Epic Listening Spree! 🎯";
-    if (longestListeningDay.playCount > 100) return "Serious Jam Session! 🎸";
+    if (longestListeningDay.playCount > 300) return "You listened to";
+    if (longestListeningDay.playCount > 200) return "You listened to";
+    if (longestListeningDay.playCount > 100) return "You listened to";
     return "Solid Music Day! 🎵";
   };
 
@@ -35,7 +34,7 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
     if (hours > 8) {
       return "You spent more time with music than most people spend at work! 🎧";
     }
-    return "Now that's what we call a proper soundtrack to your day! 🎶";
+    return "How do you even have the time? 🤔";
   };
 
   const getTimeComparison = () => {
@@ -148,12 +147,11 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <h3 className="text-xl font-semibold mb-2">Fun Fact 🎈</h3>
-            <p className="text-gray-400">
+            <h3 className="text-xl font-semibold mb-2">
               {songsPerMinute >= 1
                 ? "You averaged more than one song per minute! Talk about speed listening! 🏃‍♂️"
                 : "That's like having a personal DJ for your entire day! 🎧"}
-            </p>
+            </h3>
           </motion.div>
         </motion.div>
       </div>
