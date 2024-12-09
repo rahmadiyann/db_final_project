@@ -7,8 +7,8 @@ echo "Installing dependencies..."
 npm install --legacy-peer-deps
 
 echo "Building Next.js application..."
-npm run build
+npx prisma generate
 
 echo "Starting Next.js application..."
-exec npm start
+exec npm run dev
 
