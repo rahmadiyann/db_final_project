@@ -30,7 +30,9 @@ RUN pip install \
     requests \
     pandas \
     soda-core \
-    soda-core-postgres
+    soda-core-postgres \
+    beautifulsoup4 \
+    google-generativeai
 
 COPY --chown=airflow:root ./dags /opt/airflow/dags
 COPY --chown=airflow:root ./data /opt/airflow/data
