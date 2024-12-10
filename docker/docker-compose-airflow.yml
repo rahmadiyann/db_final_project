@@ -19,6 +19,14 @@ services:
       - POSTGRES_ANALYSIS_PORT=${POSTGRES_ANALYSIS_PORT}
       - SPARK_MASTER_HOST_NAME=${SPARK_MASTER_HOST_NAME}
       - SPARK_MASTER_PORT=${SPARK_MASTER_PORT}
+      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+      - AIRFLOW__SMTP__SMTP_PORT=587
+      - AIRFLOW__SMTP__SMTP_MAIL_FROM=${EMAIL_SENDER}
+      - AIRFLOW__SMTP__SMTP_USER=${EMAIL_SENDER}
+      - AIRFLOW__SMTP__SMTP_PASSWORD=${EMAIL_PASSWORD}
+      - AIRFLOW__SMTP__SMTP_STARTTLS=True
+      - AIRFLOW__SMTP__SMTP_SSL=False
+      - AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE=Asia/Jakarta
     volumes:
       - ../dags:/opt/airflow/dags
       - ../logs:/opt/airflow/logs
@@ -51,6 +59,14 @@ services:
       - POSTGRES_ANALYSIS_PORT=${POSTGRES_ANALYSIS_PORT}
       - SPARK_MASTER_HOST_NAME=${SPARK_MASTER_HOST_NAME}
       - SPARK_MASTER_PORT=${SPARK_MASTER_PORT}
+      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+      - AIRFLOW__SMTP__SMTP_PORT=587
+      - AIRFLOW__SMTP__SMTP_MAIL_FROM=${EMAIL_SENDER}
+      - AIRFLOW__SMTP__SMTP_USER=${EMAIL_SENDER}
+      - AIRFLOW__SMTP__SMTP_PASSWORD=${EMAIL_PASSWORD}
+      - AIRFLOW__SMTP__SMTP_STARTTLS=True
+      - AIRFLOW__SMTP__SMTP_SSL=False
+      - AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE=Asia/Jakarta
     volumes:
       - ../dags:/opt/airflow/dags
       - ../logs:/opt/airflow/logs
