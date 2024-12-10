@@ -122,7 +122,7 @@ def generate_content(data_file: str) -> Dict[str, Any]:
     Returns:
         A dictionary containing the generated content.
     """
-    genai.configure(api_key=os.getenv('GENAI_API'))
+    genai.configure(api_key=os.getenv('GENAI_API_KEY'))
     
     with open(data_file, 'r') as f:
         data = json.load(f)

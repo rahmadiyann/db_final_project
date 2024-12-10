@@ -2,8 +2,7 @@ from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
-from airflow.providers.common.sql.operators.sql import SQLCheckOperator
-from airflow.utils.task_group import TaskGroup
+from airflow.sensors.external_task import ExternalTaskSensor
 from datetime import datetime, timedelta
 from python_scripts.main2genai import source2landing, generate_content, ingest_email_content, sendEmail
 from python_scripts.models import (
@@ -29,7 +28,7 @@ with DAG(
     'monthly_wrapped_email_blast',
     default_args=default_args,
     description='Monthly Spotify Wrapped Email Blast',
-    schedule_interval='0 0 1 * *',  # Run at midnight on the first day of every month
+    schedule_interval='@monthly',  # Run at midnight on the first day of every month
     start_date=datetime(2024, 12, 9, tzinfo=local_tz),
     catchup=False,
     concurrency=1,
@@ -40,32 +39,15 @@ with DAG(
     start = EmptyOperator(task_id='start')
     end = EmptyOperator(task_id='end', trigger_rule='all_success')
 
-    # Create data check tasks for each analysis table
-    with TaskGroup(group_id='data_checks') as data_checks:
-        tables = [
-            'analysis.album_completion_analysis',
-            'analysis.song_duration_preference',
-            'analysis.song_popularity_distribution',
-            'analysis.explicit_preference',
-            'analysis.day_of_week_listening_distribution',
-            'analysis.hour_of_day_listening_distribution',
-            'analysis.session_between_songs',
-            'analysis.album_release_year_play_count',
-            'metrics.top_played_song',
-            'metrics.artist_longest_streak',
-            'metrics.longest_listening_day',
-            'metrics.statistics'
-        ]
-
-        checks = []
-        for table_name in tables:
-            check = SQLCheckOperator(
-                task_id=f'check_{table_name}_data',
-                conn_id='main_postgres',
-                sql=f"SELECT COUNT(*) > 0 FROM {table_name}",
-                dag=dag,
-            )
-            checks.append(check)
+    datamart_sensor = ExternalTaskSensor(
+        task_id='datamart_sensing',
+        external_dag_id='spotify_analysis_etl',
+        external_task_id='end',
+        mode='reschedule',
+        poke_interval=60,
+        timeout=60 * 60 * 24,
+        dag=dag,
+    )
 
     # Task to extract data and save to JSON
     extract_data = PythonOperator(
@@ -90,6 +72,12 @@ with DAG(
     clean_up_data = BashOperator(
         task_id='clean_up_data',
         bash_command='rm -rf /data/spotify_analysis/monthly_email_blast/*',
+        dag=dag,
+    )
+    
+    to_hist = BashOperator(
+        task_id='to_hist',
+        bash_command='mv /data/monthly_email_blast/staging/* /data/monthly_email_blast/hist/',
         dag=dag,
     )
 
@@ -122,4 +110,4 @@ with DAG(
     )
 
     # Set up dependencies
-    start >>data_checks >> extract_data >> generate_ai_content >> create_email >> send_email >> clean_up_data >> end
+    start >> datamart_sensor >> extract_data >> generate_ai_content >> create_email >> send_email >> to_hist >> clean_up_data >> end
