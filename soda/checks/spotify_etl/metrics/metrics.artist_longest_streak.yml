@@ -1,0 +1,24 @@
+checks for artist_longest_streak:
+  # Row count check
+  - row_count = 1
+
+  # Value range checks
+  - min(streak_days) between 1 and 31
+  - max(streak_days) between 1 and 31
+
+  - freshness(date_from) <= 31d
+  - freshness(date_until) <= 31d
+
+  # Schema check
+  - schema:
+      name: Check artist longest streak schema
+      fail:
+        when required column missing:
+          [
+            artist_id,
+            artist_name,
+            artist_image_url,
+            streak_days,
+            date_from,
+            date_until,
+          ]

@@ -1,0 +1,17 @@
+checks for statistics:
+  # Row count check
+  - row_count = 1
+
+  # Value range checks
+  - min(total_miliseconds) > 0
+  - max(total_miliseconds) > 0
+
+  - min(total_songs_played) > 0
+  - max(total_songs_played) > 0
+
+  # Schema check
+  - schema:
+      name: Check statistics schema
+      fail:
+        when required column missing:
+          [total_miliseconds, total_songs_played, id]

@@ -1,0 +1,21 @@
+checks for song_popularity_distribution:
+  # Row count check
+  - row_count <= 10
+
+  - min(play_count) > 0
+  - max(play_count) > 0
+
+  - min(popularity_bracket) = 0
+  - max(popularity_bracket) = 9
+
+  - min(percentage) > 0
+  - max(percentage) > 0
+
+  - duplicate_count(popularity_bracket) = 0
+
+  # Schema check
+  - schema:
+      name: Check popularity distribution schema
+      fail:
+        when required column missing:
+          [popularity_bracket, play_count, popularity_range, percentage, id]

@@ -1,0 +1,16 @@
+checks for explicit_preference:
+  # Row count check
+  - row_count = 2
+
+  # Value range checks
+  - min(play_count) > 0
+  - max(play_count) > 0
+
+  - min(percentage) > 0
+  - max(percentage) > 0
+
+  # Schema checks
+  - schema:
+      name: Check explicit preference schema
+      fail:
+        when required column missing: [explicit, play_count, percentage, id]

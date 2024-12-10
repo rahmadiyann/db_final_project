@@ -1,0 +1,17 @@
+checks for song_duration_preference:
+  # Row count check
+  - row_count <= 3
+
+  # Value range checks
+  - min(play_count) > 0
+  - max(play_count) > 0
+
+  - min(percentage) > 0
+  - max(percentage) > 0
+
+  # Schema check
+  - schema:
+      name: Check duration preference schema
+      fail:
+        when required column missing:
+          [duration_category, play_count, percentage, id]

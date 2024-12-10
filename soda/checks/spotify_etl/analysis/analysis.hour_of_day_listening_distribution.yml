@@ -1,0 +1,19 @@
+checks for hour_of_day_listening_distribution:
+  # Row count check
+  - row_count <= 24
+
+  # Value range checks
+  - min(hour_of_day) > 0
+  - max(hour_of_day) > 0
+
+  - min(play_count) > 0
+  - max(play_count) > 0
+
+  - min(percentage) > 0
+  - max(percentage) > 0
+
+  # Schema check
+  - schema:
+      name: Check hour of day schema
+      fail:
+        when required column missing: [hour_of_day, play_count, percentage, id]

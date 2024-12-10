@@ -1,0 +1,9 @@
+data_source analysis_db:
+  type: postgres
+  connection:
+    host: ${POSTGRES_CONTAINER_NAME}
+    port: ${POSTGRES_PORT}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    database: ${POSTGRES_DB}
+    schema: analysis

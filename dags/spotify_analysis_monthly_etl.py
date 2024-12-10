@@ -101,6 +101,18 @@ def create_sql_task(task_id, sql, conn_id='main_postgres'):
         dag=dag,
     )
     
+def create_soda_check_task(task_id, table):
+    schema = table.split('.')[0]
+    table_name = table.split('.')[1]
+    
+    db = "analysis_db" if schema == "analysis" else "metrics_db"
+    
+    return BashOperator(
+        task_id=task_id,
+        bash_command=f'soda scan -d {db} -c /soda/config/soda_config_{schema}.yml /soda/checks/spotify_etl/{schema}/{schema}.{table_name}.yml -srf /soda/logs/{task_id}.log',
+        dag=dag,
+    )
+    
 def clean_up_data(source: str):
     logger.info(f'Cleaning up {source}')
     return BashOperator(
@@ -191,18 +203,32 @@ with TaskGroup("staging_to_datamart", dag=dag) as staging_to_datamart_group:
             for table in metrics_table
         ]
 
-with TaskGroup("count_check", dag=dag) as count_check_group:
-    with TaskGroup("analysis", dag=dag) as count_check_analysis_group:
-        count_check_tasks = [
-            create_sql_task(f'{table}', f"SELECT COUNT(*) FROM analysis.{table}")
-            for table in analysis_tables
-        ]
+with TaskGroup("checks", dag=dag) as checks_group:
+    with TaskGroup("count_check", dag=dag) as count_check_group:
+        with TaskGroup("analysis", dag=dag) as count_check_analysis_group:
+            count_check_tasks = [
+                create_sql_task(f'{table}', f"SELECT COUNT(*) FROM analysis.{table}")
+                for table in analysis_tables
+            ]
+            
+        with TaskGroup("metrics", dag=dag) as count_check_metrics_group:
+            count_check_tasks = [
+                create_sql_task(f'{table}', f"SELECT COUNT(*) FROM metrics.{table}")
+                for table in metrics_table
+            ]
+    
+    with TaskGroup("soda_check", dag=dag) as soda_check_group:
+        with TaskGroup("analysis", dag=dag) as soda_check_analysis_group:
+            soda_check_tasks = [
+                create_soda_check_task(f'soda_check_{table}', f"analysis.{table}")
+                for table in analysis_tables
+            ]
         
-    with TaskGroup("metrics", dag=dag) as count_check_metrics_group:
-        count_check_tasks = [
-            create_sql_task(f'{table}', f"SELECT COUNT(*) FROM metrics.{table}")
-            for table in metrics_table
-        ]
+        with TaskGroup("metrics", dag=dag) as soda_check_metrics_group:
+            soda_check_tasks = [
+                create_soda_check_task(f'soda_check_{table}', f"metrics.{table}")
+                for table in metrics_table
+            ]
 
 with TaskGroup("staging2hist", dag=dag) as staging_to_hist_group:
     with TaskGroup("analysis", dag=dag) as staging_to_hist_analysis_group:
@@ -224,4 +250,4 @@ with TaskGroup("cleanup", dag=dag) as cleanup_group:
         task >> email_end
 
 # Set up dependencies
-start >> check_last_month_data >>source_to_landing_group >> landing_to_staging_group >> staging_to_datamart_group >> count_check_group >> staging_to_hist_group >> cleanup_group >> end
+start >> check_last_month_data >>source_to_landing_group >> landing_to_staging_group >> staging_to_datamart_group >> checks_group >> staging_to_hist_group >> cleanup_group >> end

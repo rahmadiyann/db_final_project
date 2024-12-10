@@ -1,0 +1,19 @@
+checks for longest_listening_day:
+  # Row count check
+  - row_count = 1
+
+  # Value range checks
+  - min(total_miliseconds) > 0
+  - max(total_miliseconds) > 0
+
+  - min(songs_played) > 0
+  - max(songs_played) > 0
+
+  - freshness(date) <= 31d
+
+  # Schema check
+  - schema:
+      name: Check longest day schema
+      fail:
+        when required column missing:
+          [date, total_miliseconds, songs_played, id]

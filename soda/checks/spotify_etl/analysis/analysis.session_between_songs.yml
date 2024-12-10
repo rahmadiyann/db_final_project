@@ -1,0 +1,16 @@
+checks for session_between_songs:
+  # Row count check
+  - row_count <= 3
+
+  # Value range checks
+  - min(count) > 0
+  - max(count) > 0
+
+  - min(percentage) > 0
+  - max(percentage) > 0
+
+  # Schema check
+  - schema:
+      name: Check session schema
+      fail:
+        when required column missing: [session_type, count, percentage, id]

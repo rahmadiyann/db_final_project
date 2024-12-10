@@ -1,0 +1,23 @@
+checks for album_completion_analysis:
+  # Row count check
+  - row_count = 10
+  # Check for null data
+  - missing_count(total_tracks) = 0
+  - missing_count(unique_tracks_played) = 0
+  - missing_count(completion_percentage) = 0
+  - missing_count(listening_status) = 0
+
+  # Schema checks
+  - schema:
+      name: Check album completion schema
+      fail:
+        when required column missing:
+          [
+            album_title,
+            artist_name,
+            total_tracks,
+            unique_tracks_played,
+            completion_percentage,
+            listening_status,
+            id,
+          ]

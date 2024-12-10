@@ -1,0 +1,26 @@
+checks for top_played_song:
+  # Row count check
+  - row_count = 1
+
+  # Value range checks
+  - min(play_count) > 0
+  - max(play_count) > 0
+
+  - freshness(first_played_at) <= 40d
+  - freshness(last_played_at) <= 40d
+
+  # Schema check
+  - schema:
+      name: Check top played song schema
+      fail:
+        when required column missing:
+          [
+            song_id,
+            song_title,
+            artist_id,
+            artist_name,
+            artist_image_url,
+            play_count,
+            first_played_at,
+            last_played_at,
+          ]

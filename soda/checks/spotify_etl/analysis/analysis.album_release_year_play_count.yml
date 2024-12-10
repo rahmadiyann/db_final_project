@@ -1,0 +1,15 @@
+checks for album_release_year_play_count:
+  # Row count check
+  - row_count > 10
+
+  # Value range checks
+  - max(release_year) = 2024
+
+  - min(play_count) > 0
+  - max(play_count) > 0
+
+  # Schema checks
+  - schema:
+      name: Check release year schema
+      fail:
+        when required column missing: [release_year, play_count, id]

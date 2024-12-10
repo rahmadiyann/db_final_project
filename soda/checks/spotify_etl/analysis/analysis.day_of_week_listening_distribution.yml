@@ -1,0 +1,34 @@
+checks for day_of_week_listening_distribution:
+  # Row count check
+  - row_count = 7
+
+  # Value range checks
+  - min(play_count) > 0
+  - max(play_count) > 0
+
+  - min(unique_songs) > 0
+  - max(unique_songs) > 0
+
+  - min(unique_artists) > 0
+  - max(unique_artists) > 0
+
+  - min(song_variety_percentage) > 0
+  - max(song_variety_percentage) > 0
+
+  - min(artist_variety_percentage) > 0
+  - max(artist_variety_percentage) > 0
+
+  # Schema check
+  - schema:
+      name: Check day of week schema
+      fail:
+        when required column missing:
+          [
+            day_of_week,
+            play_count,
+            unique_songs,
+            unique_artists,
+            song_variety_percentage,
+            artist_variety_percentage,
+            id,
+          ]
