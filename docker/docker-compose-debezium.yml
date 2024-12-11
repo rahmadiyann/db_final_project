@@ -30,7 +30,7 @@ services:
       - dataeng-network
 
   ksqldb:
-    image: confluentinc/ksqldb-server:latest
+    image: confluentinc/cp-ksqldb-server:latest.arm64
     container_name: ${KSQL_CONTAINER_NAME}
     hostname: ${KSQL_HOST}
     depends_on:

@@ -27,6 +27,13 @@ airflow variables set 'last_fetch_time' \
 airflow variables set 'email_recipient' \
 -v '{{"EMAIL_RECIPIENT": "'$EMAIL_RECIPIENT'"}}'
 
+airflow connections add 'email_alert' \
+--conn-type 'email' \
+--conn-host 'smtp.gmail.com' \
+--conn-login $EMAIL_SENDER \
+--conn-password $EMAIL_PASSWORD \
+--conn-port 587 
+
 export SPARK_FULL_HOST_NAME="spark://$SPARK_MASTER_HOST_NAME"
 airflow connections add 'spark_main' \
 --conn-type 'spark' \
