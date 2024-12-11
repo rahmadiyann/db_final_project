@@ -5,6 +5,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from datetime import datetime, timedelta
 from airflow.models.variable import Variable
+from airflow.operators.sql import SQLCheckOperator
 from python_scripts.source2main import (
     convert_to_timestamp_ms,
     landing2staging,
@@ -18,6 +19,7 @@ import os
 
 localtz = pendulum.timezone("Asia/Jakarta")
 timestamp_ms = Variable.get('last_fetch_time')
+tables = ['dim_album', 'dim_song', 'dim_artist', 'fact_history']
 
 default_args = {
     'owner': 'rahmadiyan',
@@ -30,6 +32,12 @@ default_args = {
 }
 
 staging_metadata = "{{ task_instance.xcom_pull(task_ids='landing2staging') }}"
+
+def check_last_fetch():
+    last_fetch_time = Variable.get('last_fetch_time')
+    if last_fetch_time == '0':
+        return 'personal2main_full_load'
+    return 'source2landing'
 
 def check_for_new_dims(staging_metadata: str):
     staging_metadata = json.loads(staging_metadata)
@@ -70,11 +78,10 @@ def make_load_dim(table, staging_metadata):
         op_kwargs={'table': table, 'staging_metadata': staging_metadata}
     )
 
-def update_last_fetch_time(staging_metadata):
-    staging_metadata = json.loads(staging_metadata)
-    played_at_end = staging_metadata['played_at_end']
-    Variable.set('last_fetch_time', convert_to_timestamp_ms(played_at_end))
-    return played_at_end
+def update_last_fetch_time():
+    timestamp_ms = int(datetime.now().timestamp() * 1000)
+    Variable.set('last_fetch_time', timestamp_ms)
+    return timestamp_ms
 
 def prepare_soda_check(staging_metadata: str, task_instance: TaskInstance):
     """Prepare Soda check by creating a dynamic check file with the correct timestamp and choose appropriate check"""
@@ -153,8 +160,13 @@ with DAG(
 
     start = EmptyOperator(task_id='start')
     
+    determine_job = BranchPythonOperator(
+        task_id='determine_job',
+        python_callable=check_last_fetch
+    )
+    
     landing_path = f"/data/source2main/landing/listening_history_{timestamp_ms}.json"
-    tables = ['artists', 'albums', 'songs']
+    tables = ['dim_artist', 'dim_album', 'dim_song']
             
     source2landing = BashOperator(
         task_id='source2landing',
@@ -167,7 +179,7 @@ with DAG(
         op_kwargs={'timestamp_ms': timestamp_ms}
     )
     
-    landing2staging = PythonOperator(
+    landing2staging_task = PythonOperator(
         task_id='landing2staging',
         python_callable=landing2staging,
         op_kwargs={
@@ -181,10 +193,9 @@ with DAG(
         op_kwargs={'staging_metadata': staging_metadata}
     )
     
-    update_last_fetch_time = PythonOperator(
+    update_last_fetch_time_task = PythonOperator(
         task_id='update_flag',
         python_callable=update_last_fetch_time,
-        op_kwargs={'staging_metadata': staging_metadata},
         trigger_rule='none_failed_min_one_success'
     )
     
@@ -192,7 +203,7 @@ with DAG(
     enrich_dim_albums = make_load_dim('albums', staging_metadata)
     enrich_dim_songs = make_load_dim('songs', staging_metadata)
     
-    load_facts = PythonOperator(
+    load_facts_task = PythonOperator(
         task_id='load_facts',
         python_callable=load_fact_table,
         op_kwargs={
@@ -204,7 +215,7 @@ with DAG(
         task_id='enrich_dimensions'
     )
     
-    hist = PythonOperator(
+    hist_task = PythonOperator(
         task_id='staging2hist',
         python_callable=to_hist,
         op_kwargs={
@@ -212,10 +223,10 @@ with DAG(
         },
         trigger_rule='none_failed_min_one_success'
     )
-
-    cleanup_task = PythonOperator(
+    
+    cleanup_task = BashOperator(
         task_id='cleanup',
-        python_callable=cleanup,
+        bash_command=f'rm -rf /data/source2main/* /sql/migration/*',
         trigger_rule='none_failed_min_one_success'
     )
     
@@ -256,27 +267,75 @@ with DAG(
         '/soda/checks/source2main_fact_checks.yml',
         soda_variables
     )
+    
+    personal2main_full_load = EmptyOperator(task_id='personal2main_full_load')
+    
 
     # Update task dependencies
-    start >> source2landing >> check_landing
+    start >> determine_job >> [personal2main_full_load, source2landing]
+    
+    migrate_dump_fact = BashOperator(
+        task_id='dump_fact_history',
+        bash_command=f'sh /bash_scripts/data_dump.sh fact_history '
+    )
+    
+    for table in tables:
+        migrate_dump_task = BashOperator(
+            task_id=f'dump_{table}',
+            bash_command=f'sh /bash_scripts/data_dump.sh {table} '
+        )
+        
+        personal2main_full_load >> migrate_dump_task >> migrate_dump_fact
+        
+    migrate_load_fact = BashOperator(
+            task_id='load_fact_history',
+            bash_command=f'sh /bash_scripts/data_load.sh fact_history '
+        )
+    
+    for table in tables:
+        migrate_load_task = BashOperator(
+            task_id=f'load_{table}',
+            bash_command=f'sh /bash_scripts/data_load.sh {table} '
+        )
+        
+        migrate_dump_fact >> migrate_load_task >> migrate_load_fact
+        
+    fact_count_check = SQLCheckOperator(
+        task_id='fact_count_check',
+        sql=f'SELECT COUNT(*) FROM public.fact_history',
+        conn_id='main_postgres'
+    )
+    
+    for table in tables:
+        dim_count_check = SQLCheckOperator(
+            task_id=f'{table}_count_check',
+            sql=f'SELECT COUNT(*) FROM public.{table}',
+            conn_id='main_postgres'
+        )
+        
+        migrate_load_fact >> dim_count_check >> fact_count_check
+        
+    fact_count_check >> update_last_fetch_time_task
+        
+    source2landing >> check_landing
     
     # Main success path
-    check_landing >> landing2staging >> check_dimensions
+    check_landing >> landing2staging_task >> check_dimensions
     
     # Path when dimensions need to be enriched
     check_dimensions >> enrich_dimensions
     enrich_dimensions >> [enrich_dim_artists, enrich_dim_albums, enrich_dim_songs] 
     [enrich_dim_artists, enrich_dim_albums, enrich_dim_songs] >> wait_enrich_dimensions 
-    wait_enrich_dimensions >> load_facts
+    wait_enrich_dimensions >> load_facts_task
     
     # Path when no dimension updates needed
-    check_dimensions >> load_facts
+    check_dimensions >> load_facts_task
     
     # Branching after load_facts for Soda checks
-    load_facts >> soda_check_prep >> [soda_full_check, soda_fact_check]
+    load_facts_task >> soda_check_prep >> [soda_full_check, soda_fact_check]
     
     # Common success path
-    [soda_full_check, soda_fact_check] >> hist >> update_last_fetch_time >> cleanup_task
+    [soda_full_check, soda_fact_check] >> hist_task >> update_last_fetch_time_task >> cleanup_task
     
     # Error path - only skip to cleanup
     check_landing >> cleanup_task
