@@ -53,7 +53,9 @@ class DataProcessor:
         self.api_client = APIClient()
 
     def entity_exists(self, model_class, entity_id: str, id_field: str) -> bool:
-        return self.session.query(model_class).filter(
+        return self.session.query(
+            getattr(model_class, id_field)
+        ).filter(
             getattr(model_class, id_field) == entity_id
         ).first() is not None
 
@@ -206,7 +208,6 @@ class DataProcessor:
         """Move processed data to historical storage"""
         staging_metadata = json.loads(staging_metadata)
         staging_path = staging_metadata['staging_file_path']
-        last_fetch = staging_metadata['last_fetch']
         last_play = staging_metadata['last_played_at']
         last_play = int(last_play)  # Convert string timestamp to int
         
