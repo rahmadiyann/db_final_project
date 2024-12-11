@@ -92,8 +92,8 @@ def prepare_soda_check(staging_metadata: str, task_instance: TaskInstance):
             staging_metadata = json.loads(staging_metadata)
             
         # Extract values
-        played_at_start = staging_metadata['played_at_start']
-        played_at_end = staging_metadata['played_at_end']
+        played_at_start = datetime.strptime(staging_metadata['played_at_start'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d %H:%M:%S')
+        played_at_end = datetime.strptime(staging_metadata['played_at_end'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d %H:%M:%S')
         fact_count = staging_metadata['listening_history_count']
         dim_song_count = staging_metadata['songs_count']
         dim_album_count = staging_metadata['albums_count']
@@ -196,7 +196,7 @@ with DAG(
     update_last_fetch_time_task = PythonOperator(
         task_id='update_flag',
         python_callable=update_last_fetch_time,
-        trigger_rule='none_failed_min_one_success'
+        trigger_rule='none_failed'
     )
     
     enrich_dim_artists = make_load_dim('artists', staging_metadata)
@@ -208,7 +208,8 @@ with DAG(
         python_callable=load_fact_table,
         op_kwargs={
             'staging_metadata': staging_metadata
-        }
+        },
+        trigger_rule='one_success'
     )
     
     enrich_dimensions = EmptyOperator(
@@ -221,7 +222,7 @@ with DAG(
         op_kwargs={
             'staging_metadata': staging_metadata
         },
-        trigger_rule='none_failed_min_one_success'
+        trigger_rule='one_success'
     )
     
     cleanup_task = BashOperator(
@@ -246,14 +247,14 @@ with DAG(
 
     # Create variables dictionary using Jinja templating
     soda_variables = {
-        "PLAYED_AT_START_TIME": "{{ task_instance.xcom_pull(task_ids='prepare_soda_check', key='PLAYED_AT_START_TIME') }}",
-        "PLAYED_AT_END_TIME": "{{ task_instance.xcom_pull(task_ids='prepare_soda_check', key='PLAYED_AT_END_TIME') }}",
-        "ADDED_AT_START_TIME": "{{ task_instance.xcom_pull(task_ids='prepare_soda_check', key='ADDED_AT_START_TIME') }}",
-        "ADDED_AT_END_TIME": "{{ task_instance.xcom_pull(task_ids='prepare_soda_check', key='ADDED_AT_END_TIME') }}",
-        "FACT_ROW_COUNT": "{{ task_instance.xcom_pull(task_ids='prepare_soda_check', key='FACT_ROW_COUNT') }}",
-        "DIM_SONG_ROW_COUNT": "{{ task_instance.xcom_pull(task_ids='prepare_soda_check', key='DIM_SONG_ROW_COUNT') }}",
-        "DIM_ALBUM_ROW_COUNT": "{{ task_instance.xcom_pull(task_ids='prepare_soda_check', key='DIM_ALBUM_ROW_COUNT') }}",
-        "DIM_ARTIST_ROW_COUNT": "{{ task_instance.xcom_pull(task_ids='prepare_soda_check', key='DIM_ARTIST_ROW_COUNT') }}"
+        "PLAYED_AT_START_TIME": "{{ task_instance.xcom_pull(task_ids='dq_prep', key='PLAYED_AT_START_TIME') }}",
+        "PLAYED_AT_END_TIME": "{{ task_instance.xcom_pull(task_ids='dq_prep', key='PLAYED_AT_END_TIME') }}",
+        "ADDED_AT_START_TIME": "{{ task_instance.xcom_pull(task_ids='dq_prep', key='ADDED_AT_START_TIME') }}",
+        "ADDED_AT_END_TIME": "{{ task_instance.xcom_pull(task_ids='dq_prep', key='ADDED_AT_END_TIME') }}",
+        "FACT_ROW_COUNT": "{{ task_instance.xcom_pull(task_ids='dq_prep', key='FACT_ROW_COUNT') }}",
+        "DIM_SONG_ROW_COUNT": "{{ task_instance.xcom_pull(task_ids='dq_prep', key='DIM_SONG_ROW_COUNT') }}",
+        "DIM_ALBUM_ROW_COUNT": "{{ task_instance.xcom_pull(task_ids='dq_prep', key='DIM_ALBUM_ROW_COUNT') }}",
+        "DIM_ARTIST_ROW_COUNT": "{{ task_instance.xcom_pull(task_ids='dq_prep', key='DIM_ARTIST_ROW_COUNT') }}"
     }
 
     soda_full_check = create_soda_check_operator(
@@ -303,7 +304,7 @@ with DAG(
     fact_count_check = SQLCheckOperator(
         task_id='fact_count_check',
         sql=f'SELECT COUNT(*) FROM public.fact_history',
-        conn_id='main_postgres'
+        conn_id='main_postgres',
     )
     
     for table in tables:
@@ -338,7 +339,7 @@ with DAG(
     [soda_full_check, soda_fact_check] >> hist_task >> update_last_fetch_time_task >> cleanup_task
     
     # Error path - only skip to cleanup
-    check_landing >> cleanup_task
+    check_landing >> update_last_fetch_time_task >> cleanup_task
     
     # Final task
     cleanup_task >> end
