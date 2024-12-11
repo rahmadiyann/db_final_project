@@ -17,3 +17,5 @@ RUN pip install \
     kafka-python==2.0.2 \
     faker==18.9.0
 COPY ./.env /opt/app/.env
+ENV PYTHONDONTWRITEBYTECODE 1
+RUN export PYTHONDONTWRITEBYTECODE
