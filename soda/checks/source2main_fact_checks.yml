@@ -20,3 +20,5 @@ checks for fact_history:
       name: All albums must exist in dimension
   - values in (artist_id) must exist in dim_artist (artist_id):
       name: All artists must exist in dimension
+  - duplicate_count(played_at) = 0:
+      name: No duplicate played timestamps
