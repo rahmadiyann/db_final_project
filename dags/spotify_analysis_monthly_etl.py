@@ -2,8 +2,10 @@ from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.providers.common.sql.operators.sql import SQLCheckOperator
 from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
 from airflow.utils.task_group import TaskGroup
+from airflow.operators.email import EmailOperator
 from datetime import datetime, timedelta
 import pendulum
 import logging
@@ -59,7 +61,7 @@ and ensures data consistency through proper staging and transformation steps.
 dag = DAG(
     'spotify_analysis_etl',
     default_args=default_args,
-    description='Spotify Analysis ETL Pipeline',
+    description='Spotify Analysis monthly ETL Pipeline',
     schedule_interval='@monthly',
     concurrency=2,
     max_active_runs=1,
@@ -67,6 +69,8 @@ dag = DAG(
     doc_md=doc_md,
     tags=['monthly'],
 )
+
+email_receiver = ['rahmadiyanmuhammad12@gmail.com']
 
 def create_spark_task(task_id, stage, destination, table, transform=False):
     application_name = f"{table}_{stage}2{destination}"
@@ -120,6 +124,49 @@ def clean_up_data(source: str):
         bash_command=f'rm -rf /data/spotify_analysis/{source}/* ',
         dag=dag,
     )
+    
+# =========== SET EMAIL START/END NOTIFICATION ===========
+def email_start(**context):
+    buss_date = context['ds']
+    print("""
+            subject : ETL {0} is Started.<br/><br/>
+            Message :
+                Dear All, <br/><br/>
+
+                Monthly ETL {0} for Business Date {1} is Started.
+        """.format(dag.description, buss_date))
+    email_op = EmailOperator(
+                task_id='send_email',
+                to=email_receiver,
+                subject="ETL {0} is Started.".format(dag.description),
+                html_content="""
+                    Dear All, <br/><br/>
+        
+                    Monthly ETL {0} for Business Date {1} is Started.
+                """.format(dag.description, buss_date),
+            )
+    email_op.execute(context)
+
+def email_end(**context):
+    buss_date = context['ds']
+    print("""
+        subject : ETL {0} is Finished.<br/><br/>
+        Message :
+            Dear All, <br/><br/>
+
+            Monthly ETL {0} for Business Date {1} is Finished.
+    """.format(dag.description, buss_date))
+    email_op = EmailOperator(
+        task_id='send_email',
+        to=email_receiver,
+        subject="ETL {0} is Finished.".format(dag.description),
+        html_content="""
+            Dear All, <br/><br/>
+
+            Monthly ETL {0} for Business Date {1} is Finished.
+            """.format(dag.description, buss_date),
+    )
+    email_op.execute(context)
     
 # Task groups
 start = EmptyOperator(task_id='start', dag=dag)
@@ -244,10 +291,21 @@ with TaskGroup("staging2hist", dag=dag) as staging_to_hist_group:
 with TaskGroup("cleanup", dag=dag) as cleanup_group:
     cleanup_tasks = [clean_up_data(source) for source in ['landing', 'staging']]
         
-    email_end = EmptyOperator(task_id='email_end', dag=dag)
-    
-    for task in cleanup_tasks:
-        task >> email_end
+        
+op_email_start = PythonOperator(
+    task_id='email_start',
+    python_callable=email_start,
+    provide_context=True,
+    dag=dag
+)
+
+op_email_end = PythonOperator(
+    task_id='email_end',
+    python_callable=email_end,
+    provide_context=True,
+    dag=dag
+)
+
 
 # Set up dependencies
-start >> check_last_month_data >>source_to_landing_group >> landing_to_staging_group >> staging_to_datamart_group >> checks_group >> staging_to_hist_group >> cleanup_group >> end
+start >> op_email_start >> check_last_month_data >> source_to_landing_group >> landing_to_staging_group >> staging_to_datamart_group >> checks_group >> staging_to_hist_group >> cleanup_group >> op_email_end >> end
