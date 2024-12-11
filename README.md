@@ -120,6 +120,15 @@ The `Makefile` contains useful commands for building, starting, and managing the
 - `make dashboard`: Starts the Next.js dashboard.
 - `make clean`: Cleans up the running containers and volumes.
 
+and some other useful commands include:
+
+- `make postgres-full-insert`: Inserts all data from the source database to the main database.
+- `make postgres-count-check`: Checks the count of each table in the main and replica databases.
+- `make connect-main-postgres`: Connects to the main database.
+- `make connect-replica-postgres`: Connects to the replica database.
+- `make connect-airflow-postgres`: Connects to the Airflow database.
+- `make docker-build service=$service`: Builds the Docker image for the specified service.
+
 Refer to the Makefile for more available commands.
 
 ## Conclusion
