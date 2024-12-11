@@ -1,9 +1,12 @@
 from airflow import DAG
 from airflow.models.taskinstance import TaskInstance
 from airflow.operators.empty import EmptyOperator
+from airflow.operators.email import EmailOperator
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.utils.task_group import TaskGroup
 from datetime import datetime, timedelta
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.models.variable import Variable
 from airflow.operators.sql import SQLCheckOperator
 from python_scripts.source2main import (
@@ -31,7 +34,56 @@ default_args = {
     'retry_delay': timedelta(minutes=5)
 }
 
+email_receiver = ['rahmadiyanmuhammad12@gmail.com']
+
 staging_metadata = "{{ task_instance.xcom_pull(task_ids='landing2staging') }}"
+
+# =========== SET EMAIL START/END NOTIFICATION ===========
+def email_start(**context):
+    buss_date = context['ds']
+    print("""
+        subject : ETL {0} is Started.<br/><br/>
+        Message :
+            Dear All, <br/><br/>
+
+            Hourly ETL {0} for Business Date {1} is Started.
+    """.format(dag.description, buss_date))
+    
+    email_op = EmailOperator(
+                task_id='send_email',
+                to=email_receiver,
+                subject="ETL {0} is Started.".format(dag.description),
+                html_content="""
+                    Dear All, <br/><br/>
+        
+                    Hourly ETL {0} for Business Date {1} is Started.
+                """.format(dag.description, buss_date),
+            )
+    
+    email_op.execute(context)
+
+def email_end(**context):
+    buss_date = context['ds']
+    print("""
+        subject : ETL {0} is Finished.<br/><br/>
+        Message :
+            Dear All, <br/><br/>
+
+            Hourly ETL {0} for Business Date {1} is Finished.
+    """.format(dag.description, buss_date))
+    
+    email_op = EmailOperator(
+        task_id='send_email',
+        to=email_receiver,
+        subject="ETL {0} is Finished.".format(dag.description),
+        html_content="""
+            Dear All, <br/><br/>
+
+            Hourly ETL {0} for Business Date {1} is Finished.
+            """.format(dag.description, buss_date),
+    )
+    
+    email_op.execute(context)
 
 def check_last_fetch():
     last_fetch_time = Variable.get('last_fetch_time')
@@ -78,8 +130,16 @@ def make_load_dim(table, staging_metadata):
         op_kwargs={'table': table, 'staging_metadata': staging_metadata}
     )
 
-def update_last_fetch_time():
-    timestamp_ms = int(datetime.now().timestamp() * 1000)
+def update_last_fetch_time(**context):
+    pg_hook = PostgresHook(postgres_conn_id='main_postgres')
+    result = pg_hook.get_first("""
+        SELECT (EXTRACT(EPOCH FROM played_at) * 1000)::BIGINT
+        FROM fact_history 
+        ORDER BY played_at DESC 
+        LIMIT 1
+    """)
+    
+    timestamp_ms = result[0]
     Variable.set('last_fetch_time', timestamp_ms)
     return timestamp_ms
 
@@ -160,6 +220,20 @@ with DAG(
 
     start = EmptyOperator(task_id='start')
     
+    op_email_start = PythonOperator(
+        task_id='email_start',
+        python_callable=email_start,
+        provide_context=True,
+        dag=dag
+    )
+    
+    op_email_end = PythonOperator(
+        task_id='email_end',
+        python_callable=email_end,
+        provide_context=True,
+        dag=dag
+    )
+    
     determine_job = BranchPythonOperator(
         task_id='determine_job',
         python_callable=check_last_fetch
@@ -199,9 +273,12 @@ with DAG(
         trigger_rule='none_failed'
     )
     
-    enrich_dim_artists = make_load_dim('artists', staging_metadata)
-    enrich_dim_albums = make_load_dim('albums', staging_metadata)
-    enrich_dim_songs = make_load_dim('songs', staging_metadata)
+    with TaskGroup(group_id='enrich_dimensions') as enrich_dimensions:
+        enrich_dim_artists = make_load_dim('artists', staging_metadata)
+        enrich_dim_albums = make_load_dim('albums', staging_metadata)
+        enrich_dim_songs = make_load_dim('songs', staging_metadata)
+        
+        [enrich_dim_artists, enrich_dim_albums, enrich_dim_songs]
     
     load_facts_task = PythonOperator(
         task_id='load_facts',
@@ -210,10 +287,6 @@ with DAG(
             'staging_metadata': staging_metadata
         },
         trigger_rule='one_success'
-    )
-    
-    enrich_dimensions = EmptyOperator(
-        task_id='enrich_dimensions'
     )
     
     hist_task = PythonOperator(
@@ -233,10 +306,6 @@ with DAG(
     
     end = EmptyOperator(
         task_id='end'
-    )
-
-    wait_enrich_dimensions = EmptyOperator(
-        task_id='wait_enrich_dimensions'
     )
     
     soda_check_prep = BranchPythonOperator(
@@ -271,52 +340,54 @@ with DAG(
     
     personal2main_full_load = EmptyOperator(task_id='personal2main_full_load')
     
-
+    with TaskGroup(group_id='migrate_dump') as migrate_dump:
+        migrate_dump_fact = BashOperator(
+            task_id='dump_fact_history',
+            bash_command=f'sh /bash_scripts/data_dump.sh fact_history '
+        )
+        
+        for table in tables:
+            migrate_dump_task = BashOperator(
+                task_id=f'dump_{table}',
+                bash_command=f'sh /bash_scripts/data_dump.sh {table} '
+            )
+            
+            migrate_dump_task >> migrate_dump_fact
+            
+    with TaskGroup(group_id='migrate_load') as migrate_load:
+        migrate_load_fact = BashOperator(
+                task_id='load_fact_history',
+                bash_command=f'sh /bash_scripts/data_load.sh fact_history '
+            )
+        
+        for table in tables:
+            migrate_load_task = BashOperator(
+                task_id=f'load_{table}',
+                bash_command=f'sh /bash_scripts/data_load.sh {table} '
+            )
+            
+            migrate_load_task >> migrate_load_fact
+            
+    with TaskGroup(group_id='migrate_check') as migrate_check:
+        fact_count_check = SQLCheckOperator(
+            task_id='fact_count_check',
+            sql=f'SELECT COUNT(*) FROM public.fact_history',
+            conn_id='main_postgres',
+        )
+        
+        for table in tables:
+            dim_count_check = SQLCheckOperator(
+                task_id=f'{table}_count_check',
+                sql=f'SELECT COUNT(*) FROM public.{table}',
+                conn_id='main_postgres'
+            )
+            
+            dim_count_check >> fact_count_check
+            
     # Update task dependencies
-    start >> determine_job >> [personal2main_full_load, source2landing]
+    start >> op_email_start >> determine_job >> [personal2main_full_load, source2landing]
     
-    migrate_dump_fact = BashOperator(
-        task_id='dump_fact_history',
-        bash_command=f'sh /bash_scripts/data_dump.sh fact_history '
-    )
-    
-    for table in tables:
-        migrate_dump_task = BashOperator(
-            task_id=f'dump_{table}',
-            bash_command=f'sh /bash_scripts/data_dump.sh {table} '
-        )
-        
-        personal2main_full_load >> migrate_dump_task >> migrate_dump_fact
-        
-    migrate_load_fact = BashOperator(
-            task_id='load_fact_history',
-            bash_command=f'sh /bash_scripts/data_load.sh fact_history '
-        )
-    
-    for table in tables:
-        migrate_load_task = BashOperator(
-            task_id=f'load_{table}',
-            bash_command=f'sh /bash_scripts/data_load.sh {table} '
-        )
-        
-        migrate_dump_fact >> migrate_load_task >> migrate_load_fact
-        
-    fact_count_check = SQLCheckOperator(
-        task_id='fact_count_check',
-        sql=f'SELECT COUNT(*) FROM public.fact_history',
-        conn_id='main_postgres',
-    )
-    
-    for table in tables:
-        dim_count_check = SQLCheckOperator(
-            task_id=f'{table}_count_check',
-            sql=f'SELECT COUNT(*) FROM public.{table}',
-            conn_id='main_postgres'
-        )
-        
-        migrate_load_fact >> dim_count_check >> fact_count_check
-        
-    fact_count_check >> update_last_fetch_time_task
+    personal2main_full_load >> migrate_dump >> migrate_load >> migrate_check >> update_last_fetch_time_task
         
     source2landing >> check_landing
     
@@ -324,10 +395,7 @@ with DAG(
     check_landing >> landing2staging_task >> check_dimensions
     
     # Path when dimensions need to be enriched
-    check_dimensions >> enrich_dimensions
-    enrich_dimensions >> [enrich_dim_artists, enrich_dim_albums, enrich_dim_songs] 
-    [enrich_dim_artists, enrich_dim_albums, enrich_dim_songs] >> wait_enrich_dimensions 
-    wait_enrich_dimensions >> load_facts_task
+    check_dimensions >> enrich_dimensions >> load_facts_task
     
     # Path when no dimension updates needed
     check_dimensions >> load_facts_task
@@ -342,4 +410,4 @@ with DAG(
     check_landing >> update_last_fetch_time_task >> cleanup_task
     
     # Final task
-    cleanup_task >> end
+    cleanup_task >> op_email_end >>end
