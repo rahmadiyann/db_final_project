@@ -71,13 +71,13 @@ with DAG(
     
     clean_up_data = BashOperator(
         task_id='clean_up_data',
-        bash_command='rm -rf /data/spotify_analysis/monthly_email_blast/*',
+        bash_command='rm -rf /data/spotify_analysis/monthly_email_blast/landing/* && rm -rf /data/spotify_analysis/monthly_email_blast/staging/*',
         dag=dag,
     )
     
     to_hist = BashOperator(
         task_id='to_hist',
-        bash_command='mv /data/monthly_email_blast/staging/* /data/monthly_email_blast/hist/',
+        bash_command='mkdir -p /data/monthly_email_blast/hist/ && mv /data/monthly_email_blast/staging/* /data/monthly_email_blast/hist/',
         dag=dag,
     )
 
