@@ -310,4 +310,27 @@ stop-all:
 postgres-bash:
 	@docker exec -it dataeng-postgres bash
 
-# postgres_db=# insert into dim_artist(artist_id, name, external_url, follower_count, image_url, popularity) VALUES('a', 'a', 'a', 1, 'a', 10);
+give-all-permission:
+	@chmod +x bash_scripts/api_extraction.sh
+	@chmod +x bash_scripts/data_dump.sh
+	@chmod +x bash_scripts/data_load.sh
+	@chmod +x bash_scripts/truncate_table.sh
+	@chmod +x scripts/entrypoint.sh
+	@chmod +x scripts/next_entrypoint.sh
+	@chmod -R 777 bash_scripts
+	@chmod -R 777 scripts
+	@chmod -R 777 sql
+	@chmod -R 777 cdc_connectors
+	@chmod -R 777 dags
+	@chmod -R 777 dashboard
+	@chmod -R 777 data
+	@chmod -R 777 flask_endpoint
+	@chmod -R 777 jars
+	@chmod -R 777 logs
+	@chmod -R 777 soda
+	@chmod -R 777 spark_scripts
+	@chmod -R 777 sql
+	@echo '__________________________________________________________'
+	@echo 'All permissions given'
+	@echo '__________________________________________________________'
+
