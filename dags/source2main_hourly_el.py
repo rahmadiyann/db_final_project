@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.models.taskinstance import TaskInstance
 from airflow.operators.empty import EmptyOperator
-from airflow.operators.email import EmailOperator
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.utils.task_group import TaskGroup
@@ -10,12 +9,12 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.models.variable import Variable
 from airflow.operators.sql import SQLCheckOperator
 from python_scripts.source2main import (
-    convert_to_timestamp_ms,
     landing2staging,
     load_dimension_tables,
     load_fact_table,
     to_hist
 )
+from python_scripts.email_util import sendEmail
 import json
 import pendulum
 import os
@@ -41,49 +40,30 @@ staging_metadata = "{{ task_instance.xcom_pull(task_ids='landing2staging') }}"
 # =========== SET EMAIL START/END NOTIFICATION ===========
 def email_start(**context):
     buss_date = context['ds']
-    print("""
+    message = """
         subject : ETL {0} is Started.<br/><br/>
         Message :
             Dear All, <br/><br/>
 
             Hourly ETL {0} for Business Date {1} is Started.
-    """.format(dag.description, buss_date))
+    """.format(dag.dag_id, buss_date)
+    print(message)
     
-    email_op = EmailOperator(
-                task_id='send_email',
-                to=email_receiver,
-                subject="ETL {0} is Started.".format(dag.description),
-                html_content="""
-                    Dear All, <br/><br/>
-        
-                    Hourly ETL {0} for Business Date {1} is Started.
-                """.format(dag.description, buss_date),
-            )
-    
-    email_op.execute(context)
+    sendEmail(email_string=message, subject="ETL {0} is Started.".format(dag.dag_id))
 
 def email_end(**context):
     buss_date = context['ds']
-    print("""
+    message = """
         subject : ETL {0} is Finished.<br/><br/>
         Message :
             Dear All, <br/><br/>
 
             Hourly ETL {0} for Business Date {1} is Finished.
-    """.format(dag.description, buss_date))
+    """.format(dag.dag_id, buss_date)
+    print(message)
     
-    email_op = EmailOperator(
-        task_id='send_email',
-        to=email_receiver,
-        subject="ETL {0} is Finished.".format(dag.description),
-        html_content="""
-            Dear All, <br/><br/>
+    sendEmail(email_string=message, subject="ETL {0} is Finished.".format(dag.dag_id))
 
-            Hourly ETL {0} for Business Date {1} is Finished.
-            """.format(dag.description, buss_date),
-    )
-    
-    email_op.execute(context)
 
 def check_last_fetch():
     last_fetch_time = Variable.get('last_fetch_time')

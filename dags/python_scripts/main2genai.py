@@ -83,35 +83,6 @@ def source2landing(ArtistLongestStreak, AlbumCompletionAnalysis, AlbumReleaseYea
         return data_file
     finally:
         session.close()
-
-def sendEmail(email_file: str):
-    email_sender = os.getenv('EMAIL_SENDER')
-    email_password = os.getenv('EMAIL_PASSWORD')
-    email_receiver = os.getenv('EMAIL_RECEIVER')
-    with open(email_file, 'r') as f:
-        message = f.read()
-    msg = MIMEMultipart()
-    msg['From'] = email_sender
-    msg['To'] = email_receiver
-    msg['Subject'] = 'Your Music Universe'
-    msg.attach(MIMEText(message, 'html'))
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(email_sender, email_password)
-        server.sendmail(email_sender, email_receiver, msg.as_string())
-        server.quit()
-        print('Email sent successfully')
-        return {
-            'status': 'success',
-            'message': 'Email sent successfully'
-        }
-    except Exception as e:
-        print(e)
-        return {
-            'status': 'error',
-            'message': str(e)
-        }
         
 def generate_content(data_file: str) -> Dict[str, Any]:
     """Generates content using the Gemini 1.5 Flash model.

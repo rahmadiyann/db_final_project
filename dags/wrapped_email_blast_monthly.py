@@ -4,7 +4,8 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.sensors.external_task import ExternalTaskSensor
 from datetime import datetime, timedelta
-from python_scripts.main2genai import source2landing, generate_content, ingest_email_content, sendEmail
+from python_scripts.main2genai import source2landing, generate_content, ingest_email_content
+from python_scripts.email_util import sendEmail
 from python_scripts.models import (
     ArtistLongestStreak, AlbumCompletionAnalysis, AlbumReleaseYearPlayCount,
     LongestListeningDay, DayOfWeekListeningDistribution, HourOfDayListeningDistribution,

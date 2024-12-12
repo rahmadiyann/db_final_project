@@ -245,12 +245,16 @@ debezium-register-source:
 	@echo '==========================================================='
 debezium-register-sink:
 	@curl -X POST -H "Content-Type: application/json" --data @cdc_connectors/sink-connector-dim-artist-config.json http://localhost:8083/connectors
+	@echo '__________________________________________________________'
 	@echo 'Registered dim_artist sink connector'
 	@curl -X POST -H "Content-Type: application/json" --data @cdc_connectors/sink-connector-dim-album-config.json http://localhost:8083/connectors
+	@echo '__________________________________________________________'
 	@echo 'Registered dim_album sink connector'
 	@curl -X POST -H "Content-Type: application/json" --data @cdc_connectors/sink-connector-dim-song-config.json http://localhost:8083/connectors
+	@echo '__________________________________________________________'
 	@echo 'Registered dim_song sink connector'
 	@curl -X POST -H "Content-Type: application/json" --data @cdc_connectors/sink-connector-fact-history-config.json http://localhost:8083/connectors
+	@echo '__________________________________________________________'
 	@echo 'Registered fact_history sink connector'
 	@echo '__________________________________________________________'
 	@echo 'All Sink Connectors Registered'
