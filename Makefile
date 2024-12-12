@@ -310,6 +310,14 @@ clean-images:
 stop-all:
 	@docker ps -aq | xargs docker stop
 
+all:
+	@make postgres
+	@make spark
+	@make airflow
+	@make flask
+	@make debezium
+	@make dashboard
+
 # Connecting to postgres container
 postgres-bash:
 	@docker exec -it dataeng-postgres bash
