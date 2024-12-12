@@ -16,6 +16,8 @@ mkdir -p "$dir_path"
 # Make API call and save response
 response=$(curl -s "http://flask:8000/recent_played?last_fetch_time=$timestamp&limit=50")
 
+echo "Response: $response"
+
 if [ $? -ne 0 ]; then
     echo "Error: Failed to call API"
     exit 1
