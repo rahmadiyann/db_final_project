@@ -224,7 +224,8 @@ with DAG(
             
     source2landing = BashOperator(
         task_id='source2landing',
-        bash_command=f"sh /bash_scripts/api_extraction.sh {timestamp_ms} /data/source2main/landing listening_history_{timestamp_ms}.json"
+        bash_command=f"sh /bash_scripts/api_extraction.sh {timestamp_ms} /data/source2main/landing listening_history_{timestamp_ms}.json",
+        do_xcom_push=True
     )
     
     check_landing = BranchPythonOperator(

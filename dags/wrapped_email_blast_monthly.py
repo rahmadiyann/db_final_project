@@ -13,6 +13,7 @@ from python_scripts.models import (
     SongPopularityDistribution, ExplicitPreference
 )
 import pendulum
+from sensors.latest_status_sensor import LatestStatusSensor
 
 local_tz = pendulum.timezone("Asia/Jakarta")
 
@@ -40,7 +41,7 @@ with DAG(
     start = EmptyOperator(task_id='start')
     end = EmptyOperator(task_id='end', trigger_rule='all_success')
 
-    datamart_sensor = ExternalTaskSensor(
+    datamart_sensor = LatestStatusSensor(
         task_id='datamart_sensing',
         external_dag_id='spotify_analysis_etl',
         external_task_id='end',

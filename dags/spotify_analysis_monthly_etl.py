@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import pendulum
 import logging
 from sensors.sql_data_sensor import LastMonthDataSensor
+from python_scripts.email_util import sendEmail
 
 logger = logging.getLogger(__name__)
 
@@ -128,45 +129,25 @@ def clean_up_data(source: str):
 # =========== SET EMAIL START/END NOTIFICATION ===========
 def email_start(**context):
     buss_date = context['ds']
-    print("""
-            subject : ETL {0} is Started.<br/><br/>
+    message = f"""
+            subject : ETL {dag.dag_id} is Started.<br/><br/>
             Message :
                 Dear All, <br/><br/>
 
-                Monthly ETL {0} for Business Date {1} is Started.
-        """.format(dag.description, buss_date))
-    email_op = EmailOperator(
-                task_id='send_email',
-                to=email_receiver,
-                subject="ETL {0} is Started.".format(dag.description),
-                html_content="""
-                    Dear All, <br/><br/>
-        
-                    Monthly ETL {0} for Business Date {1} is Started.
-                """.format(dag.description, buss_date),
-            )
-    email_op.execute(context)
+                Monthly ETL {dag.dag_id} for Business Date {buss_date} is Started.
+    """
+    sendEmail(email_string=message, subject="ETL {0} is Started.".format(dag.dag_id))
 
 def email_end(**context):
     buss_date = context['ds']
-    print("""
-        subject : ETL {0} is Finished.<br/><br/>
+    message = f"""
+        subject : ETL {dag.dag_id} is Finished.<br/><br/>
         Message :
             Dear All, <br/><br/>
 
-            Monthly ETL {0} for Business Date {1} is Finished.
-    """.format(dag.description, buss_date))
-    email_op = EmailOperator(
-        task_id='send_email',
-        to=email_receiver,
-        subject="ETL {0} is Finished.".format(dag.description),
-        html_content="""
-            Dear All, <br/><br/>
-
-            Monthly ETL {0} for Business Date {1} is Finished.
-            """.format(dag.description, buss_date),
-    )
-    email_op.execute(context)
+            Monthly ETL {dag.dag_id} for Business Date {buss_date} is Finished.
+    """
+    sendEmail(email_string=message, subject="ETL {0} is Finished.".format(dag.dag_id))
     
 # Task groups
 start = EmptyOperator(task_id='start', dag=dag)
