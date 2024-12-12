@@ -99,6 +99,9 @@ export default function ClientWrapper({ stats }: { stats: ListeningStats }) {
         <Overview totalMinutesListened={stats.totalMinutesListened} />
       </FadeSection>
       <FadeSection>
+        <LongestDay longestListeningDay={stats.longestListeningDay} />
+      </FadeSection>
+      <FadeSection>
         <DailyRhythm hourDistribution={stats.hourDistribution} />
       </FadeSection>
       <FadeSection>
@@ -124,9 +127,6 @@ export default function ClientWrapper({ stats }: { stats: ListeningStats }) {
       </FadeSection>
       <FadeSection>
         <ListeningSessions sessionTypes={stats.sessionTypes} />
-      </FadeSection>
-      <FadeSection>
-        <LongestDay longestListeningDay={stats.longestListeningDay} />
       </FadeSection>
       <FadeSection>
         <GenreDistribution />
