@@ -16,7 +16,7 @@ class ExplicitPreferenceETL(SparkETLBase):
             F.count("*").alias("play_count")
         ).withColumn(
             "percentage",
-            F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy()), 2)
+            F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy("explicit")), 2)
         ) 
         
         explicit_preference = self.add_id_column(explicit_preference)

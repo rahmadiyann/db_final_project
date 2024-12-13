@@ -26,7 +26,7 @@ class PopularityPrefETL(SparkETLBase):
             )
         ).withColumn(
             "percentage",
-            F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy()), 2)
+            F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy("popularity_bracket")), 2)
         ).orderBy("popularity_bracket")
         
         popularity_pref = self.add_id_column(popularity_pref)

@@ -21,7 +21,7 @@ class SongDurPrefETL(SparkETLBase):
             F.count("*").alias("play_count")
         ).withColumn(
             "percentage",
-            F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy()), 2)
+            F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy("duration_category")), 2)
         ).orderBy(F.desc("play_count"))
         
         song_dur_pref.show()

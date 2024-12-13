@@ -17,7 +17,7 @@ class HourOfDayPlayCountETL(SparkETLBase):
             F.count("*").alias("play_count")
         ).withColumn(
             "percentage",
-            F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy()), 2)
+            F.round(F.col("play_count") * 100 / F.sum("play_count").over(Window.partitionBy("hour_of_day")), 2)
         ).orderBy(F.desc("percentage"))
         
         hour_of_day_play_count = self.add_id_column(hour_of_day_play_count)
