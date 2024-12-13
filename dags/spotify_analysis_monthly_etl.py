@@ -289,4 +289,4 @@ op_email_end = PythonOperator(
 
 
 # Set up dependencies
-start >> op_email_start >> check_last_month_data >> source_to_landing_group >> landing_to_staging_group >> staging_to_datamart_group >> checks_group >> staging_to_hist_group >> cleanup_group >> op_email_end >> end
+start >> check_last_month_data >> op_email_start  >> source_to_landing_group >> landing_to_staging_group >> staging_to_datamart_group >> checks_group >> staging_to_hist_group >> cleanup_group >> op_email_end >> end
