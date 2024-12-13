@@ -42,37 +42,37 @@ export default function DailyRhythm({ hourDistribution }: DailyRhythmProps) {
     .reduce((sum, h) => sum + h.percentage, 0);
 
   const getListenerType = () => {
-    if (nightHours > 35) return "The Night Owl 🦉";
-    if (morningHours > 35) return "The Early Bird 🐦";
-    if (afternoonHours > 35) return "The Midday Groover 🌞";
-    if (eveningHours > 35) return "The Sunset Serenader 🌅";
+    if (nightHours > 35) return "The Night Owl ";
+    if (morningHours > 35) return "The Early Bird ";
+    if (afternoonHours > 35) return "The Midday Groover ";
+    if (eveningHours > 35) return "The Sunset Serenader ";
     return "The All-Day DJ 🎧";
   };
 
   const getListenerDescription = () => {
     if (nightHours > 35) {
-      return "When the world goes quiet, your playlist comes alive! The stars are your disco lights ✨";
+      return "When the world goes quiet, your playlist comes alive! The stars are your disco lights ";
     }
     if (morningHours > 35) {
-      return "Rise and shine with the rhythm! Your day starts with the perfect soundtrack 🌅";
+      return "Rise and shine with the rhythm! Your day starts with the perfect soundtrack ";
     }
     if (afternoonHours > 35) {
-      return "Peak productivity hours? More like peak playlist hours! Keeping the midday energy high 🌞";
+      return "Peak productivity hours? More like peak playlist hours! Keeping the midday energy high ";
     }
     if (eveningHours > 35) {
-      return "As the day winds down, your music winds up! Making every sunset a little more melodic 🎵";
+      return "As the day winds down, your music winds up! Making every sunset a little more melodic ";
     }
-    return "Your music knows no time bounds - any hour is the right hour for the right tune! 🎪";
+    return "Your music knows no time bounds - any hour is the right hour for the right tune! ";
   };
 
   const getPeakHourMood = () => {
     const hour = peakHour.hourOfDay;
-    if (hour >= 5 && hour <= 8) return "Early morning motivation! 💪";
-    if (hour >= 9 && hour <= 11) return "Mid-morning groove! 🎵";
-    if (hour >= 12 && hour <= 14) return "Lunch break beats! 🍽️";
+    if (hour >= 5 && hour <= 8) return "Early morning motivation! ";
+    if (hour >= 9 && hour <= 11) return "Mid-morning groove! ";
+    if (hour >= 12 && hour <= 14) return "Lunch break beats! ";
     if (hour >= 15 && hour <= 17) return "Afternoon pick-me-up! ☕";
-    if (hour >= 18 && hour <= 20) return "Evening vibes! 🌆";
-    if (hour >= 21 && hour <= 23) return "Late night jams! 🌙";
+    if (hour >= 18 && hour <= 20) return "Evening vibes! ";
+    if (hour >= 21 && hour <= 23) return "Late night jams! ";
     return "Midnight melodies! 🌠";
   };
 
@@ -137,7 +137,7 @@ export default function DailyRhythm({ hourDistribution }: DailyRhythmProps) {
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
         >
-          <h2 className="text-3xl font-bold">Your Daily Rhythm 🎵</h2>
+          <h2 className="text-3xl font-bold">Your Daily Rhythm </h2>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -171,25 +171,25 @@ export default function DailyRhythm({ hourDistribution }: DailyRhythmProps) {
                   <div className="text-yellow-400 font-bold">
                     <CountUp end={morningHours} duration={2} decimals={1} />%
                   </div>
-                  <div>Morning Vibes 🌅</div>
+                  <div>Morning Vibes </div>
                 </div>
                 <div>
                   <div className="text-orange-400 font-bold">
                     <CountUp end={afternoonHours} duration={2} decimals={1} />%
                   </div>
-                  <div>Afternoon Groove 🌞</div>
+                  <div>Afternoon Groove </div>
                 </div>
                 <div>
                   <div className="text-pink-400 font-bold">
                     <CountUp end={eveningHours} duration={2} decimals={1} />%
                   </div>
-                  <div>Evening Flow 🌆</div>
+                  <div>Evening Flow </div>
                 </div>
                 <div>
                   <div className="text-purple-400 font-bold">
                     <CountUp end={nightHours} duration={2} decimals={1} />%
                   </div>
-                  <div>Night Mode 🌙</div>
+                  <div>Night Mode </div>
                 </div>
               </div>
             </div>
@@ -203,7 +203,7 @@ export default function DailyRhythm({ hourDistribution }: DailyRhythmProps) {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <h3 className="text-xl font-semibold mb-2">Peak Hour 🎧</h3>
+              <h3 className="text-xl font-semibold mb-2">Peak Hour </h3>
               <p className="text-gray-400">
                 <span className="text-indigo-400 font-bold">
                   {formatHour(peakHour.hourOfDay)}
@@ -234,7 +234,7 @@ export default function DailyRhythm({ hourDistribution }: DailyRhythmProps) {
               <p className="text-gray-400">
                 {nightHours > morningHours
                   ? "You've spent more time vibing at night than during breakfast! Maybe that's why coffee was invented? ☕"
-                  : "You're more likely to be jamming with your breakfast than your midnight snack! Early bird gets the bops! 🎵"}
+                  : "You're more likely to be jamming with your breakfast than your midnight snack! Early bird gets the bops! "}
               </p>
             </motion.div>
           </div>

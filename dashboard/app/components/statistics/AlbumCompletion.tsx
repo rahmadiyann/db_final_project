@@ -28,35 +28,35 @@ export default function AlbumCompletion({
 
   const getListenerType = () => {
     if (completedAlbums > albumCompletions.length * 0.7)
-      return "The Completionist 🏆";
-    if (avgCompletion > 75) return "The Album Enthusiast 💿";
+      return "The Completionist ";
+    if (avgCompletion > 75) return "The Album Enthusiast ";
     if (inProgressAlbums > albumCompletions.length * 0.8)
       return "The Explorer 🗺️";
-    if (avgCompletion < 30) return "The Sampler 🎵";
+    if (avgCompletion < 30) return "The Sampler ";
     return "The Balanced Listener ⚖️";
   };
 
   const getListenerDescription = () => {
     if (completedAlbums > albumCompletions.length * 0.7) {
-      return "You're not here to skip tracks! When you start an album, you're in it for the long haul. Artists love listeners like you! 🎸";
+      return "You're not here to skip tracks! When you start an album, you're in it for the long haul. Artists love listeners like you! ";
     }
     if (avgCompletion > 75) {
-      return "You really appreciate the album format. Taking in the full artistic vision, one album at a time! 🎨";
+      return "You really appreciate the album format. Taking in the full artistic vision, one album at a time! ";
     }
     if (inProgressAlbums > albumCompletions.length * 0.8) {
-      return "So many albums, so little time! You're on a mission to explore every corner of your music library. 🚀";
+      return "So many albums, so little time! You're on a mission to explore every corner of your music library. ";
     }
     if (avgCompletion < 30) {
-      return "You know what you like! Why waste time when you've found the perfect track? Hit that next button! ⏭️";
+      return "You know what you like! Why waste time when you've found the perfect track? Hit that next button! ⏭";
     }
-    return "You've got a healthy mix of full album deep-dives and quick hits. Keeping it interesting! 🎯";
+    return "You've got a healthy mix of full album deep-dives and quick hits. Keeping it interesting! ";
   };
 
   const getCompletionMessage = (percentage: number) => {
-    if (percentage === 100) return "Every track conquered! 👑";
-    if (percentage > 75) return "Almost there! Keep going! 🎯";
-    if (percentage > 50) return "Halfway through! 🌗";
-    if (percentage > 25) return "Just getting started! 🌱";
+    if (percentage === 100) return "Every track conquered! ";
+    if (percentage > 75) return "Almost there! Keep going! ";
+    if (percentage > 50) return "Halfway through! ";
+    if (percentage > 25) return "Just getting started! ";
     return "Time to explore! 🔍";
   };
 
@@ -74,7 +74,7 @@ export default function AlbumCompletion({
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
         >
-          <h2 className="text-3xl font-bold">Album Adventures 💿</h2>
+          <h2 className="text-3xl font-bold">Album Adventures </h2>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -83,7 +83,7 @@ export default function AlbumCompletion({
             <p className="text-gray-400 max-w-2xl mx-auto">
               Are you a track-skipper or an album purist? Let's see how
               thoroughly you explore your albums. No judgment... well, maybe a
-              little! 😏
+              little!
             </p>
           </motion.div>
         </motion.div>

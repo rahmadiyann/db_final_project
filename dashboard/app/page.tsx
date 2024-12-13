@@ -32,7 +32,7 @@ export default async function Home() {
           <h1 className="text-3xl font-bold">Oops! Something went wrong</h1>
           <p className="text-gray-400">
             We&apos;re having trouble loading your listening statistics. Please
-            try again later. 🎵
+            try again later.
           </p>
           <button
             onClick={() => window.location.reload()}

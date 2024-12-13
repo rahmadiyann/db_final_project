@@ -32,10 +32,10 @@ export default function PopularityDistribution({
   const normalizedMainstream = total > 0 ? (mainstreamRatio / total) * 100 : 0;
 
   const getListenerType = () => {
-    if (normalizedAlternative > 70) return "The Trendsetter 🎸";
-    if (normalizedAlternative > 50) return "The Early Adopter 🔍";
-    if (normalizedMainstream > 70) return "The Chart Chaser 📈";
-    if (normalizedMainstream > 50) return "The Radio Lover 📻";
+    if (normalizedAlternative > 70) return "The Trendsetter ";
+    if (normalizedAlternative > 50) return "The Early Adopter ";
+    if (normalizedMainstream > 70) return "The Chart Chaser ";
+    if (normalizedMainstream > 50) return "The Radio Lover ";
     return "The Balanced Explorer ⚖️";
   };
 
@@ -58,13 +58,13 @@ export default function PopularityDistribution({
   const getMessage = (range: string) => {
     switch (range) {
       case "Underground":
-        return "Hidden gems & indie treasures 💎";
+        return "Hidden gems & indie treasures ";
       case "Rising":
-        return "Tomorrow's hits, today 📈";
+        return "Tomorrow's hits, today ";
       case "Popular":
-        return "Trending & buzzing tracks 🔥";
+        return "Trending & buzzing tracks ";
       case "Mainstream":
-        return "Chart-toppers & radio favorites ⭐";
+        return "Chart-toppers & radio favorites ";
       default:
         return "";
     }
@@ -73,13 +73,13 @@ export default function PopularityDistribution({
   const getVerdict = (range: string) => {
     switch (range) {
       case "Underground":
-        return "Ooh, we've got a hipster here! 🎸";
+        return "Ooh, we've got a hipster here! ";
       case "Rising":
-        return "Ahead of the curve, aren't we? 😎";
+        return "Ahead of the curve, aren't we? ";
       case "Popular":
-        return "Riding the wave of what's hot! 🌊";
+        return "Riding the wave of what's hot! ";
       case "Mainstream":
-        return "Living that billboard life! 🎯";
+        return "Living that billboard life! ";
       default:
         return "";
     }
@@ -99,7 +99,7 @@ export default function PopularityDistribution({
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
         >
-          <h2 className="text-3xl font-bold">Mainstream or Maverick? 🎵</h2>
+          <h2 className="text-3xl font-bold">Mainstream or Maverick? </h2>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

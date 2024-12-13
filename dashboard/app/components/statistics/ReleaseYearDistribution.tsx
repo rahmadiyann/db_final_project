@@ -29,50 +29,50 @@ export default function ReleaseYearDistribution({
   const musicAge = currentYear - avgYear;
 
   const getListenerType = () => {
-    if (peakYear.year >= currentYear - 2) return "The Trendsetter 🌟";
-    if (peakYear.year >= currentYear - 5) return "The Modern Classic 🎵";
-    if (peakYear.year >= 2000) return "The Millennial Maestro 💿";
-    if (peakYear.year >= 1990) return "The 90s Nostalgic 📼";
-    if (peakYear.year >= 1980) return "The Retro Enthusiast 🎸";
+    if (peakYear.year >= currentYear - 2) return "The Trendsetter ";
+    if (peakYear.year >= currentYear - 5) return "The Modern Classic ";
+    if (peakYear.year >= 2000) return "The Millennial Maestro ";
+    if (peakYear.year >= 1990) return "The 90s Nostalgic ";
+    if (peakYear.year >= 1980) return "The Retro Enthusiast ";
     return "The Vintage Virtuoso 🎻";
   };
 
   const getListenerDescription = () => {
     if (peakYear.year >= currentYear - 2) {
-      return "Fresh off the press! You're always first in line for the latest releases. The ink's barely dry on these tracks! 🎧";
+      return "Fresh off the press! You're always first in line for the latest releases. The ink's barely dry on these tracks! ";
     }
     if (peakYear.year >= currentYear - 5) {
-      return "You've got a sweet spot for recent classics. Not too new, not too old - just right! ✨";
+      return "You've got a sweet spot for recent classics. Not too new, not too old - just right! ";
     }
     if (peakYear.year >= 2000) {
-      return "Y2K bug? More like Y2K groove! The millennium's greatest hits are your jam! 💫";
+      return "Y2K bug? More like Y2K groove! The millennium's greatest hits are your jam! ";
     }
     if (peakYear.year >= 1990) {
-      return "90s kid at heart! When the beat drops, you're transported back to the golden age! 📼";
+      return "90s kid at heart! When the beat drops, you're transported back to the golden age! ";
     }
     if (peakYear.year >= 1980) {
-      return "Keeping the 80s alive! Big hair, bigger sounds - that's your style! 🎸";
+      return "Keeping the 80s alive! Big hair, bigger sounds - that's your style! ";
     }
-    return "They don't make 'em like they used to, right? You're keeping the classics alive! 🎻";
+    return "They don't make 'em like they used to, right? You're keeping the classics alive! ";
   };
 
   const getTimeMachine = () => {
     const decade = Math.floor(avgYear / 10) * 10;
     switch (decade) {
       case 2020:
-        return "living in the future! 🚀";
+        return "living in the future! ";
       case 2010:
-        return "vibing with the 2010s! 🎧";
+        return "vibing with the 2010s! ";
       case 2000:
-        return "partying like it's Y2K! 💿";
+        return "partying like it's Y2K! ";
       case 1990:
-        return "keeping the 90s alive! 📼";
+        return "keeping the 90s alive! ";
       case 1980:
-        return "stuck in the 80s... in a good way! 🎸";
+        return "stuck in the 80s... in a good way! ";
       case 1970:
-        return "grooving with the 70s! 🕺";
+        return "grooving with the 70s! ";
       default:
-        return "on a timeless journey! ⭐";
+        return "on a timeless journey! ";
     }
   };
 
@@ -168,7 +168,7 @@ export default function ReleaseYearDistribution({
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
         >
-          <h2 className="text-3xl font-bold">Your Time Machine 🎵</h2>
+          <h2 className="text-3xl font-bold">Your Time Machine </h2>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -224,7 +224,7 @@ export default function ReleaseYearDistribution({
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <h3 className="text-xl font-semibold mb-2">Time Travel Report 🚀</h3>
+          <h3 className="text-xl font-semibold mb-2">Time Travel Report </h3>
           <p className="text-gray-400">
             On average, your musical time machine is {getTimeMachine()} Your
             playlist is like a journey through{" "}

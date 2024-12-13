@@ -9,8 +9,8 @@ interface OverviewProps {
 
 export default function Overview({ totalMinutesListened }: OverviewProps) {
   const days = (totalMinutesListened / 1440).toFixed(1);
-  const concerts = Math.round(totalMinutesListened / 90); // avg concert length 90 mins
-  const albums = Math.round(totalMinutesListened / 45); // avg album length 45 mins
+  const concerts = Math.round(totalMinutesListened / 90); // assuming concert length 90 mins
+  const albums = Math.round(totalMinutesListened / 45); // assuming album length 45 mins
 
   const getFunFact = () => {
     if (totalMinutesListened > 100000) {

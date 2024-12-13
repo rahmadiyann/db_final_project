@@ -50,7 +50,7 @@ export default function ListeningPreferences({
             <p className="text-gray-400 max-w-2xl mx-auto">
               Let's see if you're a sprinter or a marathon runner when it comes
               to your tunes. Some like it quick, others like to take their sweet
-              time... 😏
+              time...
             </p>
           </motion.div>
         </motion.div>
@@ -82,8 +82,8 @@ export default function ListeningPreferences({
                       {category === "Short (<3 min)"
                         ? "For when you're feeling extra snippy ✂️"
                         : category === "Medium (3-5 min)"
-                        ? "The Goldilocks zone - just right 👌"
-                        : "For the musical adventurers 🗺️"}
+                        ? "The Goldilocks zone - just right "
+                        : "For the musical adventurers "}
                     </div>
                   </motion.div>
                 );
@@ -99,11 +99,11 @@ export default function ListeningPreferences({
                   {dominantDuration.percentage}%
                 </span>
                 {dominantDuration.category === "Short (&lt; 3 min)" &&
-                  " - Attention span of a goldfish, eh? 🐠"}
+                  " - Attention span of a goldfish, eh? "}
                 {dominantDuration.category === "Medium (3-5 min)" &&
-                  " - Playing it safe, aren't we? 😌"}
+                  " - Playing it safe, aren't we? "}
                 {dominantDuration.category === "Long (&gt; 5 min)" &&
-                  " - Someone's got commitment issues... to short songs! 🎸"}
+                  " - Someone's got commitment issues... to short songs! "}
               </p>
             </div>
           </div>
@@ -111,11 +111,11 @@ export default function ListeningPreferences({
 
         <div>
           <div className="text-center space-y-4 mb-8">
-            <h2 className="text-3xl font-bold">The Naughty or Nice List 😇</h2>
+            <h2 className="text-3xl font-bold">The Naughty or Nice List </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Time to spill the tea on your content preferences! Let Let's see
               if you're keeping it PG or living life on the edge. Don't worry,
-              we won't tell your mom... 🤫
+              we won't tell your mom...
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -136,8 +136,8 @@ export default function ListeningPreferences({
                   </div>
                   <div className="text-sm text-gray-500">
                     {pref.explicit
-                      ? "The spicier side of your library 🌶️"
-                      : "Your mom-approved playlist 👌"}
+                      ? "The spicier side of your library "
+                      : "Your mom-approved playlist "}
                   </div>
                 </div>
                 <motion.div
@@ -163,12 +163,12 @@ export default function ListeningPreferences({
                   }`}
                 >
                   {preferredContent === "explicit"
-                    ? `${explicitRatio}% spicy content 🌶️`
-                    : `${cleanRatio}% squeaky clean 😇`}
+                    ? `${explicitRatio}% spicy content `
+                    : `${cleanRatio}% squeaky clean `}
                 </span>
                 {preferredContent === "explicit"
-                  ? " - Living life uncensored, you rebel! 😈"
-                  : " - Your playlist would make your grandma proud! 👵"}
+                  ? " - Living life uncensored, you rebel! "
+                  : " - Your playlist would make your grandma proud! "}
               </p>
             </div>
           </div>

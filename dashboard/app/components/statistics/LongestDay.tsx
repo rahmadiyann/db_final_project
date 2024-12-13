@@ -18,7 +18,7 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
     if (longestListeningDay.playCount > 300) return "You listened to";
     if (longestListeningDay.playCount > 200) return "You listened to";
     if (longestListeningDay.playCount > 100) return "You listened to";
-    return "Solid Music Day! 🎵";
+    return "Solid Music Day! ";
   };
 
   const getFunFact = () => {
@@ -26,15 +26,15 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
     const hours = Math.round(minutes / 60);
 
     if (hours > 16) {
-      return "Did you even sleep that day? 😴 That's more music than there are hours in the day!";
+      return "Did you even sleep that day?  That's more music than there are hours in the day!";
     }
     if (hours > 12) {
-      return "That's like having music as your full-time job! 💼 (Best job ever?)";
+      return "That's like having music as your full-time job!  (Best job ever?)";
     }
     if (hours > 8) {
-      return "You spent more time with music than most people spend at work! 🎧";
+      return "You spent more time with music than most people spend at work! ";
     }
-    return "How do you even have the time? 🤔";
+    return "How do you even have the time? ";
   };
 
   const getTimeComparison = () => {
@@ -68,7 +68,7 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
         >
-          <h2 className="text-3xl font-bold">Your Musical Marathon 🎧</h2>
+          <h2 className="text-3xl font-bold">Your Musical Marathon </h2>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -106,7 +106,7 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
               </div>
               <div className="text-gray-400">songs per hour</div>
               <div className="text-sm text-gray-500 mt-2">
-                Never a quiet moment! 🎵
+                Never a quiet moment!
               </div>
             </motion.div>
 
@@ -121,7 +121,7 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
               </div>
               <div className="text-gray-400">movies worth of music</div>
               <div className="text-sm text-gray-500 mt-2">
-                Who needs Netflix? 🎬
+                Who needs Netflix?
               </div>
             </motion.div>
 
@@ -149,8 +149,8 @@ export default function LongestDay({ longestListeningDay }: LongestDayProps) {
           >
             <h3 className="text-xl font-semibold mb-2">
               {songsPerMinute >= 1
-                ? "You averaged more than one song per minute! Talk about speed listening! 🏃‍♂️"
-                : "That's like having a personal DJ for your entire day! 🎧"}
+                ? "You averaged more than one song per minute! Talk about speed listening! "
+                : "That's like having a personal DJ for your entire day! "}
             </h3>
           </motion.div>
         </motion.div>

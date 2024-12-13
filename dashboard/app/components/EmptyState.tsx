@@ -6,11 +6,11 @@ import CountUp from "react-countup";
 import { useRouter } from "next/navigation";
 
 const musicFacts = [
-  "The longest recorded pop song is 'In The Garden' by PC III, lasting 24 hours! 🎵",
+  "The longest recorded pop song is 'In The Garden' by PC III, lasting 24 hours! ",
   "The shortest song ever recorded is 'You Suffer' by Napalm Death - just 1.316 seconds long! ⚡",
-  "The most expensive music video ever made was 'Scream' by Michael and Janet Jackson ($7 million)! 🎥",
-  "The first song ever played on MTV was 'Video Killed The Radio Star' by The Buggles! 📺",
-  "The Beatles' 'Yesterday' is the most covered song in history! 🎸",
+  "The most expensive music video ever made was 'Scream' by Michael and Janet Jackson ($7 million)! ",
+  "The first song ever played on MTV was 'Video Killed The Radio Star' by The Buggles! ",
+  "The Beatles' 'Yesterday' is the most covered song in history! ",
 ];
 
 interface Question {
@@ -32,7 +32,7 @@ const musicQuiz: Question[] = [
     ],
     answer: 1,
     explanation:
-      "PSY's 'Gangnam Style' was the first video to break the billion-view barrier in 2012! 🎉",
+      "PSY's 'Gangnam Style' was the first video to break the billion-view barrier in 2012! ",
   },
   {
     question: "Which of these albums is the best-selling of all time?",
@@ -44,19 +44,19 @@ const musicQuiz: Question[] = [
     ],
     answer: 1,
     explanation:
-      "Michael Jackson's 'Thriller' has sold over 70 million copies worldwide! 🎶",
+      "Michael Jackson's 'Thriller' has sold over 70 million copies worldwide! ",
   },
   {
     question: "Who is known as the 'Queen of Pop'?",
     options: ["Madonna", "Britney Spears", "Lady Gaga", "Beyoncé"],
     answer: 0,
-    explanation: "Madonna is widely recognized as the 'Queen of Pop'. 👑",
+    explanation: "Madonna is widely recognized as the 'Queen of Pop'. ",
   },
   {
     question: "Which band was originally called 'The Quarrymen'?",
     options: ["The Rolling Stones", "The Beatles", "The Who", "The Kinks"],
     answer: 1,
-    explanation: "The Beatles were originally known as 'The Quarrymen'. 🎸",
+    explanation: "The Beatles were originally known as 'The Quarrymen'. ",
   },
   {
     question: "What is the highest-selling single of all time?",
@@ -75,7 +75,7 @@ const musicQuiz: Question[] = [
     options: ["Beyoncé", "Stevie Wonder", "Quincy Jones", "Georg Solti"],
     answer: 3,
     explanation:
-      "Georg Solti holds the record for the most Grammy Awards won. 🏆",
+      "Georg Solti holds the record for the most Grammy Awards won. ",
   },
   {
     question:
@@ -87,8 +87,7 @@ const musicQuiz: Question[] = [
       "I Will Always Love You - Whitney Houston",
     ],
     answer: 0,
-    explanation:
-      "'Old Town Road' by Lil Nas X spent 19 weeks at number one. 🐎",
+    explanation: "'Old Town Road' by Lil Nas X spent 19 weeks at number one. ",
   },
   {
     question:
@@ -101,13 +100,13 @@ const musicQuiz: Question[] = [
     ],
     answer: 0,
     explanation:
-      "Aretha Franklin was the first woman inducted into the Rock and Roll Hall of Fame. 🎤",
+      "Aretha Franklin was the first woman inducted into the Rock and Roll Hall of Fame. ",
   },
   {
     question: "Which band is known for the album 'The Wall'?",
     options: ["Led Zeppelin", "Pink Floyd", "The Doors", "Queen"],
     answer: 1,
-    explanation: "'The Wall' is a famous album by Pink Floyd. 🧱",
+    explanation: "'The Wall' is a famous album by Pink Floyd. ",
   },
   {
     question: "What is the best-selling digital single of all time?",
@@ -119,13 +118,13 @@ const musicQuiz: Question[] = [
     ],
     answer: 2,
     explanation:
-      "'Shape of You' by Ed Sheeran is the best-selling digital single of all time. 🎶",
+      "'Shape of You' by Ed Sheeran is the best-selling digital single of all time. ",
   },
   {
     question: "Which artist is known as the 'King of Pop'?",
     options: ["Elvis Presley", "Michael Jackson", "Prince", "Freddie Mercury"],
     answer: 1,
-    explanation: "Michael Jackson is famously known as the 'King of Pop'. 👑",
+    explanation: "Michael Jackson is famously known as the 'King of Pop'. ",
   },
   {
     question: "Which song is the most streamed on Spotify?",
@@ -137,7 +136,7 @@ const musicQuiz: Question[] = [
     ],
     answer: 1,
     explanation:
-      "'Shape of You' by Ed Sheeran is the most streamed song on Spotify. 🎧",
+      "'Shape of You' by Ed Sheeran is the most streamed song on Spotify. ",
   },
   {
     question: "Which artist is known for the hit song 'Purple Rain'?",
@@ -149,7 +148,7 @@ const musicQuiz: Question[] = [
     question: "Which band released the album 'Rumours'?",
     options: ["Fleetwood Mac", "The Eagles", "The Beach Boys", "The Doors"],
     answer: 0,
-    explanation: "'Rumours' is a classic album by Fleetwood Mac. 🎶",
+    explanation: "'Rumours' is a classic album by Fleetwood Mac. ",
   },
   {
     question: "Who is known as the 'Queen of Soul'?",
@@ -160,19 +159,19 @@ const musicQuiz: Question[] = [
       "Tina Turner",
     ],
     answer: 0,
-    explanation: "Aretha Franklin is famously known as the 'Queen of Soul'. 👑",
+    explanation: "Aretha Franklin is famously known as the 'Queen of Soul'. ",
   },
   {
     question: "Which artist released the song 'Thriller'?",
     options: ["Michael Jackson", "Prince", "Madonna", "Whitney Houston"],
     answer: 0,
-    explanation: "'Thriller' is a famous song by Michael Jackson. 🎃",
+    explanation: "'Thriller' is a famous song by Michael Jackson. ",
   },
   {
     question: "Which band is known for the song 'Bohemian Rhapsody'?",
     options: ["Queen", "The Beatles", "The Rolling Stones", "Led Zeppelin"],
     answer: 0,
-    explanation: "'Bohemian Rhapsody' is a famous song by Queen. 🎤",
+    explanation: "'Bohemian Rhapsody' is a famous song by Queen. ",
   },
 ];
 
@@ -267,7 +266,7 @@ export default function EmptyState() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Take the Music Quiz! 🎯
+              Take the Music Quiz!
             </motion.button>
           </>
         ) : (

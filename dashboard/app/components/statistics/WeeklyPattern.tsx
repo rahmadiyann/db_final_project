@@ -36,31 +36,31 @@ export default function WeeklyPattern({ dayDistribution }: WeeklyPatternProps) {
   };
 
   const getListenerType = () => {
-    if (avgSongVariety > 80) return "The Adventurous Soul 🌈";
-    if (avgArtistVariety > 80) return "The Artist Explorer 🎨";
-    if (getWeekendWarrior()) return "The Weekend Warrior 🎸";
-    if (busyDay.dayOfWeek === "Monday") return "The Monday Motivator 💪";
-    if (busyDay.dayOfWeek === "Friday") return "The Friday Raver 🎉";
+    if (avgSongVariety > 80) return "The Adventurous Soul ";
+    if (avgArtistVariety > 80) return "The Artist Explorer ";
+    if (getWeekendWarrior()) return "The Weekend Warrior ";
+    if (busyDay.dayOfWeek === "Monday") return "The Monday Motivator ";
+    if (busyDay.dayOfWeek === "Friday") return "The Friday Raver ";
     return "The Steady Groover 🎵";
   };
 
   const getListenerDescription = () => {
     if (avgSongVariety > 80) {
-      return "You're all about that variety! Your playlist is like a box of chocolates - never know what you're gonna get next! 🍫";
+      return "You're all about that variety! Your playlist is like a box of chocolates - never know what you're gonna get next! ";
     }
     if (avgArtistVariety > 80) {
-      return "You're on a mission to discover every artist out there! Your music library is like a who's who of the music world 🌟";
+      return "You're on a mission to discover every artist out there! Your music library is like a who's who of the music world ";
     }
     if (getWeekendWarrior()) {
-      return "When the weekend hits, so does your playlist! You're living for those Saturday and Sunday vibes 🎉";
+      return "When the weekend hits, so does your playlist! You're living for those Saturday and Sunday vibes ";
     }
     if (busyDay.dayOfWeek === "Monday") {
-      return "Starting the week strong! Nothing beats those Monday motivation tunes, right? 💪";
+      return "Starting the week strong! Nothing beats those Monday motivation tunes, right? ";
     }
     if (busyDay.dayOfWeek === "Friday") {
-      return "TGIF is your motto! You're bringing the weekend energy with your Friday playlist 🎊";
+      return "TGIF is your motto! You're bringing the weekend energy with your Friday playlist ";
     }
-    return "You keep it steady and groovy all week long. Consistency is your middle name! 🎵";
+    return "You keep it steady and groovy all week long. Consistency is your middle name! ";
   };
 
   const getDayMood = (day: string, playCount: number) => {
@@ -70,26 +70,26 @@ export default function WeeklyPattern({ dayDistribution }: WeeklyPatternProps) {
     switch (day) {
       case "Monday":
         return intensity > 0.8
-          ? "Monday Motivation on max! 💪"
-          : "Case of the Mondays? 😴";
+          ? "Monday Motivation on max! "
+          : "Case of the Mondays? ";
       case "Tuesday":
         return intensity > 0.8
-          ? "Taco Tuesday energy! 🌮"
-          : "Just another Tuesday... 📅";
+          ? "Taco Tuesday energy! "
+          : "Just another Tuesday... ";
       case "Wednesday":
-        return intensity > 0.8 ? "Wednesday warrior! 🐪" : "Hump daaaaay 🐫";
+        return intensity > 0.8 ? "Wednesday warrior! " : "Hump daaaaay ";
       case "Thursday":
         return intensity > 0.8
-          ? "Thursday's looking good! 🌟"
-          : "Almost Friday... 😅";
+          ? "Thursday's looking good! "
+          : "Almost Friday... ";
       case "Friday":
         return intensity > 0.8
-          ? "Friday mode: ACTIVATED! 🎉"
-          : "TGIF (barely) 😮‍💨";
+          ? "Friday mode: ACTIVATED! "
+          : "TGIF (barely) 😮";
       case "Saturday":
-        return intensity > 0.8 ? "Weekend goes BRRRR! 🎸" : "Lazy Saturday? 😴";
+        return intensity > 0.8 ? "Weekend goes BRRRR! " : "Lazy Saturday? ";
       case "Sunday":
-        return intensity > 0.8 ? "Sunday funday! 🌞" : "Sunday scaries? 😰";
+        return intensity > 0.8 ? "Sunday funday! " : "Sunday scaries? ";
       default:
         return "";
     }
@@ -109,7 +109,7 @@ export default function WeeklyPattern({ dayDistribution }: WeeklyPatternProps) {
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
         >
-          <h2 className="text-3xl font-bold">Your Week in Beats 🎵</h2>
+          <h2 className="text-3xl font-bold">Your Week in Beats </h2>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
