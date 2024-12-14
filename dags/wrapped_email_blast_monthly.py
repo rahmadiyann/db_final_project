@@ -71,9 +71,15 @@ with DAG(
         }
     )
     
-    clean_up_data = BashOperator(
-        task_id='clean_up_data',
-        bash_command='rm -rf /data/spotify_analysis/monthly_email_blast/landing/* && rm -rf /data/spotify_analysis/monthly_email_blast/staging/*',
+    clean_up_staging = BashOperator(
+        task_id='clean_up_staging',
+        bash_command='rm -rf /data/spotify_analysis/monthly_email_blast/staging/*',
+        dag=dag,
+    )
+    
+    clean_up_landing = BashOperator(
+        task_id='clean_up_landing',
+        bash_command='rm -rf /data/spotify_analysis/monthly_email_blast/landing/*',
         dag=dag,
     )
     
@@ -112,4 +118,4 @@ with DAG(
     )
 
     # Set up dependencies
-    start >> datamart_sensor >> extract_data >> generate_ai_content >> create_email >> send_email >> to_hist >> clean_up_data >> end
+    start >> datamart_sensor >> extract_data >> generate_ai_content >> create_email >> send_email >> to_hist >> [clean_up_landing, clean_up_staging] >> end
