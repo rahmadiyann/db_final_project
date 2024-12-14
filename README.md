@@ -1,5 +1,7 @@
 # Spotify Data Pipeline and Analytics Platform
 
+![End-to-end Data Pipeline Diagram](assets/etl-diagram.svg)
+
 This project is an end-to-end data pipeline and analytics platform for Spotify listening data. It includes data ingestion, transformation, storage, and visualization components, providing a comprehensive solution for analyzing and deriving insights from Spotify user data.
 
 ## Architecture Overview
@@ -130,6 +132,25 @@ and some other useful commands include:
 - `make docker-build service=$service`: Builds the Docker image for the specified service.
 
 Refer to the Makefile for more available commands.
+
+## Email Wrapped
+
+![Email Wrapped](assets/email/1.jpeg)
+![Email Wrapped](assets/email/2.jpeg)
+
+## Dashboard
+
+![Dashboard-1](assets/dashboard/1.png)
+![Dashboard-2](assets/dashboard/2.png)
+![Dashboard-3](assets/dashboard/3.png)
+![Dashboard-4](assets/dashboard/4.png)
+![Dashboard-5](assets/dashboard/5.png)
+![Dashboard-6](assets/dashboard/6.png)
+![Dashboard-7](assets/dashboard/7.png)
+![Dashboard-8](assets/dashboard/8.png)
+![Dashboard-9](assets/dashboard/9.png)
+![Dashboard-10](assets/dashboard/10.png)
+![Dashboard-11](assets/dashboard/11.png)
 
 ## Conclusion
 
