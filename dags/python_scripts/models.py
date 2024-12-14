@@ -35,7 +35,6 @@ class DimSong(Base):
     external_url = Column(String)
     preview_url = Column(String)
     popularity = Column(Integer)
-    play_count = Column(Integer, default=0, nullable=True)
     
     def __repr__(self):
         return f"<DimSong(song_id={self.song_id}, title={self.title}, disc_number={self.disc_number}, duration_ms={self.duration_ms}, explicit={self.explicit}, external_url={self.external_url}, preview_url={self.preview_url}, popularity={self.popularity})>"
@@ -55,7 +54,6 @@ class DimAlbum(Base):
     image_url = Column(String)
     label = Column(String)
     popularity = Column(Integer)
-    play_count = Column(Integer, default=0, nullable=True)
     
     def __repr__(self):
         return f"<DimAlbum(album_id={self.album_id}, title={self.title}, total_tracks={self.total_tracks}, release_date={self.release_date}, external_url={self.external_url}, image_url={self.image_url}, label={self.label}, popularity={self.popularity})>"
@@ -73,7 +71,6 @@ class DimArtist(Base):
     follower_count = Column(Integer)
     image_url = Column(String)
     popularity = Column(Integer)
-    play_count = Column(Integer, default=0, nullable=True)
     
     def __repr__(self):
         return f"<DimArtist(artist_id={self.artist_id}, name={self.name}, external_url={self.external_url}, follower_count={self.follower_count}, image_url={self.image_url}, popularity={self.popularity})>"
