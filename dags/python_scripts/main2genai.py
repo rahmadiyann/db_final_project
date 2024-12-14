@@ -102,7 +102,7 @@ def generate_content(data_file: str) -> Dict[str, Any]:
         You are an expert music and/or song analyst.
         Given an dictionary of spotify listening history data, I need you to generate a monthly recap summary, mood recap, and recommendations. 
         You are to start and end your response with a fun and engaging opening and closing statement.
-        Your responses should be engaging and fun to read, also use emojis where necessary.
+        Your responses should be engaging and fun to read, do not use emojis.
         For song name, and artist name in the recaps, wrap it inside '' as I don't want you to return a markdown.
         Return only the raw JSON without any markdown formatting or code blocks.
         Your response should be returned in json format like this:
@@ -291,22 +291,22 @@ def ingest_email_content(data_file: str, content_file: str):
         
         sections = {
             'monthly_recap': {
-                'title': '📊 Monthly Recap',
+                'title': 'Monthly Recap',
                 'content': format_ai_content(content.get('monthly_recap', '')),
                 'classes': 'bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500'
             },
             'mood_recap': {
-                'title': '🎵 Mood Analysis',
+                'title': 'Mood Analysis',
                 'content': format_ai_content(content.get('mood_recap', '')),
                 'classes': 'bg-gradient-to-r from-green-50 to-teal-50 border-l-4 border-green-500'
             },
             'recommendations': {
-                'title': '🎧 Recommended for You',
+                'title': 'Recommended for You',
                 'content': format_ai_content(content.get('recommendations', '')),
                 'classes': 'bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-500'
             },
             'closing_statement': {
-                'title': '👋 Until Next Time',
+                'title': 'Until Next Time',
                 'content': format_ai_content(content.get('closing_statement', '')),
                 'classes': 'bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-500'
             }
@@ -434,7 +434,7 @@ def create_artist_streak_section(streak_data):
                     <span class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-400">
                         {streak_data['streak_days']}
                     </span>
-                    <span class="ml-2 text-gray-300">day streak 🔥</span>
+                    <span class="ml-2 text-gray-300">day streak</span>
                 </div>
                 <p class="text-sm text-gray-300 mt-2">
                     From {streak_data['date_from']} to {streak_data['date_until']}
@@ -451,7 +451,7 @@ def create_listening_habits_section(data):
     return f"""
     <div class="card-bg rounded-xl p-6 transform transition-all duration-300 hover:scale-105 border border-gray-700">
         <h3 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-6">
-            Your Music DNA 🧬
+            Your Music DNA 
         </h3>
         <div class="grid grid-cols-1 gap-6">
             <div class="bg-gray-800/30 rounded-lg p-4 border border-gray-700">
