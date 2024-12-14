@@ -281,9 +281,9 @@ with DAG(
         trigger_rule='one_success'
     )
     
-    cleanup_task = BashOperator(
+    cleanup_task = PythonOperator(
         task_id='cleanup',
-        bash_command=f'rm -rf /data/source2main/* /sql/migration/*',
+        python_callable=cleanup,
         trigger_rule='none_failed_min_one_success'
     )
     
