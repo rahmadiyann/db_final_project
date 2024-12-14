@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS "dataeng-postgres_public_dim_artist" (
     external_url TEXT NOT NULL,
     follower_count INTEGER NOT NULL,
     image_url TEXT,
-    popularity INTEGER NOT NULL
+    popularity INTEGER NOT NULL,
+    added_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create dim_album table
@@ -20,7 +21,8 @@ CREATE TABLE IF NOT EXISTS "dataeng-postgres_public_dim_album" (
     external_url TEXT NOT NULL,
     image_url TEXT,
     label TEXT NOT NULL,
-    popularity INTEGER NOT NULL
+    popularity INTEGER NOT NULL,
+    added_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create dim_song table
@@ -32,7 +34,8 @@ CREATE TABLE IF NOT EXISTS "dataeng-postgres_public_dim_song" (
     explicit BOOLEAN NOT NULL,
     external_url TEXT NOT NULL,
     preview_url TEXT,
-    popularity INTEGER NOT NULL
+    popularity INTEGER NOT NULL,
+    added_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create fact_history table with foreign key constraints
