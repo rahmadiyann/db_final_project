@@ -27,8 +27,8 @@ default_args = {
     'owner': 'rahmadiyan',
     'depends_on_past': False,
     'start_date': datetime(2024, 12, 2, tzinfo=localtz),
-    'email_on_failure': False,
-    'email_on_retry': False,
+    'email_on_failure': True,
+    'email_on_retry': True,
     'retries': 1,
     'retry_delay': timedelta(minutes=5)
 }
@@ -82,7 +82,7 @@ def check_for_new_dims(staging_metadata: str):
     if (data['artists_count'] > 0 or 
         data['albums_count'] > 0 or 
         data['songs_count'] > 0):
-        return 'enrich_dimensions'
+        return 'insert_dimensions'
     return 'load_facts'
 
 def cleanup():
@@ -100,7 +100,7 @@ def check_landing_data(timestamp_ms):
         data = json.load(f)
     
     if 'error' in data:
-        return 'cleanup'
+        return 'update_flag'
     return 'landing2staging'
 
 def make_load_dim(table, staging_metadata):
@@ -228,6 +228,8 @@ with DAG(
         do_xcom_push=True
     )
     
+    insert_dimensions = EmptyOperator(task_id='insert_dimensions')
+    
     check_landing = BranchPythonOperator(
         task_id='check_landing',
         python_callable=check_landing_data,
@@ -267,7 +269,7 @@ with DAG(
         op_kwargs={
             'staging_metadata': staging_metadata
         },
-        trigger_rule='one_success'
+        trigger_rule='all_success'
     )
     
     hist_task = PythonOperator(
@@ -376,7 +378,8 @@ with DAG(
     check_landing >> landing2staging_task >> check_dimensions
     
     # Path when dimensions need to be enriched
-    check_dimensions >> enrich_dimensions >> load_facts_task
+    check_dimensions >> insert_dimensions
+    insert_dimensions >> enrich_dimensions >> load_facts_task
     
     # Path when no dimension updates needed
     check_dimensions >> load_facts_task
