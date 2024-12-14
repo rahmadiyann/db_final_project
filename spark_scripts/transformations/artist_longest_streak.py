@@ -21,7 +21,7 @@ class ArtistLongestStreak(SparkETLBase):
         ).distinct()
         
         # Window for detecting breaks in consecutive dates
-        window = Window.partitionBy("artist_id").orderBy("play_date")
+        window = Window.partitionBy("artist_id", "play_date").orderBy("play_date")
         
         # Calculate date difference with previous date
         consecutive_days = artist_daily.withColumn(
