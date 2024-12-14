@@ -38,11 +38,19 @@ def save_token_info(session: Session, token_info: dict):
         session (Session): SQLAlchemy Database session
         token_info (dict): Token info
     """
-    session.add(Token(
-        access_token=token_info['access_token'],
-        refresh_token=token_info['refresh_token'],
-        expires_at=token_info['expires_at']
-    ))
+    token_entry_exists = session.query(Token).first()
+    if token_entry_exists:
+        session.query(Token).update({
+            'access_token': token_info['access_token'],
+            'refresh_token': token_info['refresh_token'],
+            'expires_at': token_info['expires_at']
+        })
+    else:
+        session.add(Token(
+            access_token=token_info['access_token'],
+            refresh_token=token_info['refresh_token'],
+            expires_at=token_info['expires_at']
+        ))
     session.commit()
     
 def load_access_token(session: Session):
