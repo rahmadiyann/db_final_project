@@ -6,8 +6,8 @@ COPY ./flask_endpoint/requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 
 COPY --chown=root:root ./flask_endpoint /app
-ENV PYTHONDONTWRITEBYTECODE 1
-RUN export PYTHONDONTWRITEBYTECODE
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 ENV FLASK_APP=app.py
 
 WORKDIR /app
