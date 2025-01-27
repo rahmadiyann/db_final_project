@@ -88,10 +88,12 @@ def check_for_new_dims(staging_metadata: str):
 def cleanup():
     landing_path = f'/data/source2main/landing/*'
     staging_path = f'/data/source2main/staging/*'
+    sql_path = f'/sql/migration/*'
     
     # Clean up temporary files
     os.system(f'rm -rf {landing_path}')
     os.system(f'rm -rf {staging_path}')
+    os.system(f'rm -rf {sql_path}')
 
 def check_landing_data(timestamp_ms):
     landing_path = f"/data/source2main/landing/listening_history_{timestamp_ms}.json"
