@@ -40,9 +40,13 @@ services:
     depends_on:
       - dibimbing-dataeng-spark-master
 
-  # dibimbing-dataeng-spark-worker-2:
-  #   <<: *worker_default
-  #   container_name: ${SPARK_WORKER_CONTAINER_NAME}-2
+  dibimbing-dataeng-spark-worker-2:
+    <<: *worker_default
+    container_name: ${SPARK_WORKER_CONTAINER_NAME}-2
+
+  dibimbing-dataeng-spark-worker-3:
+    <<: *worker_default
+    container_name: ${SPARK_WORKER_CONTAINER_NAME}-3
 
 networks:
   default:
