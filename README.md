@@ -133,11 +133,6 @@ and some other useful commands include:
 
 Refer to the Makefile for more available commands.
 
-## Email Wrapped
-
-![Email Wrapped](assets/email/1.jpeg)
-![Email Wrapped](assets/email/2.jpeg)
-
 ## Dashboard
 
 ![Dashboard-1](assets/dashboard/1.png)
@@ -151,6 +146,11 @@ Refer to the Makefile for more available commands.
 ![Dashboard-9](assets/dashboard/9.png)
 ![Dashboard-10](assets/dashboard/10.png)
 ![Dashboard-11](assets/dashboard/11.png)
+
+## Email Wrapped
+
+![Email Wrapped](assets/email/1.jpeg)
+![Email Wrapped](assets/email/2.jpeg)
 
 ## Conclusion
 
